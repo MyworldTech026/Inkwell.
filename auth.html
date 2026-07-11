@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inkwell — Sign In</title>
+  <link rel="stylesheet" href="auth.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Inkwell<span>.</span></a>
+      <button class="js-theme-toggle theme-toggle hidden" aria-label="Toggle theme">
+        <span class="dark-icon">☀️</span>
+        <span class="light-icon">🌙</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="auth-wrap">
+
+      <!-- AUTH CARD -->
+      <div class="auth-card">
+
+        <!-- LOGO -->
+        <div class="auth-logo">Inkwell<span>.</span></div>
+
+        <!-- TABS -->
+        <div class="auth-tabs">
+          <button class="js-signin-tab auth-tab active" data-tab="signin">
+            Sign In
+          </button>
+          <button class="js-signup-tab auth-tab" data-tab="signup">
+            Sign Up
+          </button>
+        </div>
+
+        <!-- ══════════════════
+             SIGN IN FORM
+        ══════════════════ -->
+        <div class="js-signin-form auth-form active" id="signin-form">
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input
+              type="email"
+              class="js-signin-email form-input"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label">Password</label>
+              <button class="js-forgot-password forgot-link">Forgot password?</button>
+            </div>
+            <div class="input-wrap">
+              <input
+                type="password"
+                class="js-signin-password form-input"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+              />
+              <button class="js-toggle-signin-password toggle-password" type="button">
+                <span class="js-show-icon-signin show-icon">👁</span>
+                <span class="js-hide-icon-signIn hidden">🙈</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="js-signin-error auth-error hidden"></div>
+
+          <button class="js-signin-btn auth-btn">
+            <span class="js-signin-btn-text">Sign In</span>
+            <span class="js-signin-loading btn-loading hidden">
+              <span class="btn-spinner"></span>
+              Signing in...
+            </span>
+          </button>
+
+          <!-- DIVIDER -->
+          <div class="auth-divider">
+            <span>or continue with</span>
+          </div>
+
+          <!-- GOOGLE SIGN IN -->
+          <button class="js-google-signin google-btn">
+            <img src="https://www.google.com/favicon.ico" alt="Google" class="google-icon" />
+            Continue with Google
+          </button>
+
+        </div>
+
+        <!-- ══════════════════
+             SIGN UP FORM
+        ══════════════════ -->
+        <div class="js-signup-form auth-form" id="signup-form">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input
+                type="text"
+                class="js-signup-firstname form-input"
+                placeholder="John"
+                autocomplete="given-name"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input
+                type="text"
+                class="js-signup-lastname form-input"
+                placeholder="Doe"
+                autocomplete="family-name"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <div class="input-wrap">
+              <span class="input-prefix">@</span>
+              <input
+                type="text"
+                class="js-signup-username form-input"
+                placeholder="johndoe"
+                autocomplete="username"
+              />
+            </div>
+            <span class="js-username-check username-check hidden"></span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input
+              type="email"
+              class="js-signup-email form-input"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                class="js-signup-password form-input"
+                placeholder="At least 8 characters"
+                autocomplete="new-password"
+              />
+              <button class="js-toggle-signup-password toggle-password" type="button">
+                <span class="js-show-icon show-icon">👁</span>
+                <span class="js-hide-icon hide-icon hidden">🙈</span>
+              </button>
+            </div>
+            <!-- PASSWORD STRENGTH -->
+            <div class="js-password-strength password-strength hidden">
+              <div class="strength-bar">
+                <div class="js-strength-fill strength-fill"></div>
+              </div>
+              <span class="js-strength-text strength-text"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                class="js-signup-confirm form-input"
+                placeholder="Repeat your password"
+                autocomplete="new-password"
+              />
+              <button class="js-toggle-confirm-password toggle-password" type="button">
+                <span class="js-show-icon-con show-icon">👁</span>
+                <span class="js-hide-icon-con hide-icon hidden">🙈</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="js-terms-checkbox terms-checkbox" />
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">
+                I agree to the
+                <a href="#" class="auth-link">Terms of Service</a>
+                and
+                <a href="#" class="auth-link">Privacy Policy</a>
+              </span>
+            </label>
+          </div>
+
+          <div class="js-signup-error auth-error hidden"></div>
+
+          <button class="js-signup-btn auth-btn">
+            <span class="js-signup-btn-text">Create Account</span>
+            <span class="js-signup-loading btn-loading hidden">
+              <span class="btn-spinner"></span>
+              Creating account...
+            </span>
+          </button>
+
+          <!-- DIVIDER -->
+          <div class="auth-divider">
+            <span>or continue with</span>
+          </div>
+
+          <!-- GOOGLE SIGN UP -->
+          <button class="js-google-signup google-btn">
+            <img src="https://www.google.com/favicon.ico" alt="Google" class="google-icon" />
+            Continue with Google
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- BOTTOM TEXT -->
+      <div class="auth-bottom">
+        <span class="js-auth-bottom-text auth-bottom-text">
+          Don't have an account?
+        </span>
+        <button class="js-auth-switch auth-switch">Sign up free</button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FORGOT PASSWORD MODAL -->
+  <div class="js-forgot-modal forgot-modal hidden">
+    <div class="forgot-modal-inner">
+      <div class="forgot-modal-header">
+        <h3 class="forgot-modal-title">Reset Password</h3>
+        <button class="js-close-forgot forgot-close">✕</button>
+      </div>
+      <p class="forgot-modal-desc">
+        Enter your email and we'll send you a link to reset your password.
+      </p>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input
+          type="email"
+          class="js-forgot-email form-input"
+          placeholder="you@example.com"
+        />
+      </div>
+      <div class="js-forgot-error auth-error hidden"></div>
+      <div class="js-forgot-success auth-success hidden">
+        ✅ Reset link sent! Check your inbox.
+      </div>
+      <button class="js-send-reset auth-btn">Send Reset Link</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="js-toast toast hidden"></div>
+
+  <!-- <script type="module" src="js/app.js"></script> -->
+  <script type="module" src="scripts/auth.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inkwell — Post</title>
+  <link rel="stylesheet" href="post.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Inkwell<span>.</span></a>
+
+      <div class="nav-right">
+        <button class="js-theme-toggle theme-toggle hidden" aria-label="Toggle theme">
+          <span class="dark-icon">☀️</span>
+          <span class="light-icon">🌙</span>
+        </button>
+
+        <!-- LOGGED OUT STATE -->
+        <div class="js-logged-out nav-auth">
+          <a href="auth.html" class="nav-signin">Sign in</a>
+          <a href="auth.html?mode=signup" class="nav-signup">Start writing</a>
+        </div>
+
+        <!-- LOGGED IN STATE -->
+        <div class="js-logged-in nav-user hidden">
+          <a href="write.html" class="nav-write-btn">✏️ Write</a>
+          <div class="user-menu-wrap">
+            <button class="js-user-avatar user-avatar-btn">
+              <img class="js-nav-avatar nav-avatar" src="" alt="avatar" />
+            </button>
+            <div class="js-user-dropdown user-dropdown hidden">
+              <a href="profile.html" class="dropdown-item">👤 Profile</a>
+              <a href="dashboard.html" class="dropdown-item">📝 Dashboard</a>
+              <div class="dropdown-divider"></div>
+              <button class="js-signout-btn dropdown-item danger">Sign out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PROGRESS BAR -->
+  <div class="js-read-progress read-progress"></div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-inner">
+
+      <!-- LEFT — POST CONTENT -->
+      <article class="post-article">
+
+        <!-- POST HEADER -->
+        <header class="post-header">
+
+          <div class="post-category-badge js-post-category"></div>
+
+          <h1 class="js-post-title post-title"></h1>
+
+          <p class="js-post-excerpt post-excerpt"></p>
+
+          <!-- AUTHOR ROW -->
+          <div class="post-author-row">
+            <a href="profile.html" class="js-post-author-link post-author-link">
+              <img class="js-author-avatar author-avatar" src="" alt="author" />
+            </a>
+            <div class="post-author-info">
+              <a href="profile.html" class="js-author-name author-name"></a>
+              <div class="post-meta-row">
+                <span class="js-post-date post-date"></span>
+                <span class="meta-dot">·</span>
+                <span class="js-read-time read-time"></span>
+                <span class="meta-dot">·</span>
+                <span class="js-post-views post-views"></span>
+              </div>
+            </div>
+
+            <!-- AUTHOR ACTIONS -->
+            <div class="js-post-actions post-actions">
+              <!-- Only show if current user is the author -->
+              <a class="js-edit-post-btn edit-post-btn hidden" href="write.html">
+                ✏️ Edit
+              </a>
+              <button class="js-delete-post-btn delete-post-btn hidden">
+                🗑 Delete
+              </button>
+            </div>
+          </div>
+
+          <!-- TAGS ROW -->
+          <div class="js-post-tags post-tags"></div>
+
+        </header>
+
+        <!-- COVER IMAGE -->
+        <div class="js-cover-image-wrap cover-image-wrap hidden">
+          <img class="js-cover-image cover-image" src="" alt="cover" />
+        </div>
+
+        <!-- POST BODY -->
+        <div class="js-post-body post-body"></div>
+
+        <!-- POST FOOTER ACTIONS -->
+        <div class="post-footer-actions">
+
+          <!-- LIKE BUTTON -->
+          <button class="js-like-btn like-btn">
+            <span class="js-like-icon like-icon">🤍</span>
+            <span class="js-like-count like-count">0</span>
+          </button>
+
+          <!-- COMMENT BUTTON -->
+          <button class="js-comment-scroll comment-btn">
+            <span>💬</span>
+            <span class="js-comment-count comment-count">0</span>
+          </button>
+
+          <!-- SHARE BUTTON -->
+          <div class="share-wrap">
+            <button class="js-share-btn share-btn">
+              <span>↗</span>
+              Share
+            </button>
+            <div class="js-share-dropdown share-dropdown hidden">
+              <button class="js-copy-link share-option">🔗 Copy link</button>
+              <a class="js-share-to-x share-option" href="" target="_blank" id="share-twitter">🐦 Twitter/X</a>
+              <a class="js-share-to-whatsapp share-option" href="" target="_blank" id="share-whatsapp">💬 WhatsApp</a>
+            </div>
+          </div>
+
+          <!-- BOOKMARK -->
+          <button class="js-bookmark-btn bookmark-btn">
+            <span class="js-bookmark-icon">🔖</span>
+          </button>
+
+        </div>
+
+        <!-- DIVIDER -->
+        <!-- <div class="post-divider"></div> -->
+
+        <!-- AUTHOR BIO CARD -->
+        <div class="author-bio-card">
+          <img class="js-bio-avatar bio-avatar" src="" alt="author" />
+          <div class="author-bio-info">
+            <div class="author-bio-name-row">
+              <a href="profile.html" class="js-bio-name bio-name"></a>
+              <button class="js-follow-btn follow-btn">Follow</button>
+            </div>
+            <p class="js-bio-text bio-text"></p>
+            <div class="author-bio-stats">
+              <span class="js-bio-posts bio-stat"></span>
+              <span class="bio-stat-dot">·</span>
+              <span class="js-bio-followers bio-stat"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="post-divider"></div>
+
+        <!-- COMMENTS SECTION -->
+        <section class="comments-section" id="comments">
+          <h2 class="comments-title">
+            Comments
+            <span class="js-comments-count comments-badge">0</span>
+          </h2>
+
+          <!-- ADD COMMENT -->
+          <div class="js-add-comment add-comment" id="commentBox">
+            <img class="js-comment-user-avatar comment-user-avatar" src="" alt="you" />
+            <div class="comment-input-wrap">
+              <textarea
+                class="js-comment-input comment-input"
+                placeholder="Write a comment..."
+                rows="3"
+              ></textarea>
+              <div class="comment-input-footer">
+                <span class="js-comment-error comment-error hidden"></span>
+                <button class="js-submit-comment submit-comment-btn">Post Comment</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- LOGIN TO COMMENT -->
+          <div class="js-login-to-comment login-to-comment hidden">
+            <a href="auth.html" class="login-comment-link">Sign in to leave a comment</a>
+          </div>
+
+          <!-- COMMENTS LIST -->
+          <div class="js-comments-list comments-list" id=""></div>
+
+          <!-- EMPTY COMMENTS -->
+          <div class="js-comments-empty comments-empty hidden">
+            <div class="empty-icon">💬</div>
+            <div class="empty-text">No comments yet. Be the first!</div>
+          </div>
+
+        </section>
+
+      </article>
+
+      <!-- RIGHT — STICKY SIDEBAR -->
+      <aside class="post-sidebar">
+
+        <!-- LIKE + COMMENT STICKY -->
+        <div class="sidebar-actions">
+          <button class="js-sidebar-like sidebar-action-btn">
+            <span class="js-sidebar-like-icon">🤍</span>
+            <span class="js-sidebar-like-count">0</span>
+          </button>
+          <a class="js-sidebar-comment sidebar-action-btn" href="#commentBox">
+            <span>💬</span>
+            <!-- <span class="js-sidebar-comment-count">0</span> -->
+          </a>
+          <button class="js-sidebar-bookmark sidebar-action-btn hidden">
+            <span class="js-sidebar-bookmark-icon">🔖</span>
+          </button>
+          <button class="js-sidebar-share sidebar-action-btn">
+            <span>copy link</span>
+          </button>
+        </div>
+
+        <!-- TABLE OF CONTENTS -->
+        <div class="sidebar-card toc-card hidden">
+          <div class="sidebar-card-title">📋 Table of Contents</div>
+          <div class="js-toc toc-list"></div>
+        </div>
+
+        <!-- MORE FROM AUTHOR -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">✍️ More from this author</div>
+          <div class="js-more-posts more-posts-list"></div>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div class="js-delete-modal delete-modal hidden">
+    <div class="delete-modal-inner">
+      <div class="delete-modal-icon">🗑️</div>
+      <h3 class="delete-modal-title">Delete Post?</h3>
+      <p class="delete-modal-desc">This action cannot be undone. The post will be permanently deleted.</p>
+      <div class="delete-modal-btns">
+        <button class="js-cancel-delete delete-cancel-btn">Cancel</button>
+        <button class="js-confirm-delete delete-confirm-btn">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="js-toast toast hidden"></div>
+
+  <!-- <script type="module" src="js/app.js"></script> -->
+  <script type="module" src="scripts/post.js"></script>
+</body>
+</html>
+

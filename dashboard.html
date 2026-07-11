@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inkwell — Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Inkwell<span>.</span></a>
+      <div class="nav-right">
+        <button class="js-theme-toggle theme-toggle hidden" aria-label="Toggle theme">
+          <span class="dark-icon">☀️</span>
+          <span class="light-icon">🌙</span>
+        </button>
+        <a href="write.html" class="nav-write-btn hidden">✏️ Write</a>
+        <div class="user-menu-wrap">
+          <button class="js-user-avatar user-avatar-btn">
+            <img class="js-nav-avatar nav-avatar" src="" alt="avatar" />
+          </button>
+          <div class="js-user-dropdown user-dropdown hidden">
+            <a href="profile.html" class="js-link-to-profile dropdown-item">👤 Profile</a>
+            <!-- <a href="dashboard.html" class="dropdown-item hidden">📝 Dashboard</a> -->
+            <div class="dropdown-divider"></div>
+
+           <div class="signout-roller hidden">
+                <button class="js-signout-btn dropdown-item danger">Sign out</button>
+                <div class="js-logout-spinner danger logout-spinner hidden">
+                  <div class="loggingout-spinner"></div>
+                  <span>signing out...</span>
+                </div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-inner">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Manage your posts and track your performance</p>
+        </div>
+        <a href="write.html" class="js-new-post-btn new-post-btn">✏️ New Post</a>
+      </div>
+
+      <!-- STATS ROW -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">📝</div>
+          <div class="stat-info">
+            <div class="js-total-posts stat-number">0</div>
+            <div class="stat-label">Total Posts</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👁️</div>
+          <div class="stat-info">
+            <div class="js-total-views stat-number">0</div>
+            <div class="stat-label">Total Views</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🤍</div>
+          <div class="stat-info">
+            <div class="js-total-likes stat-number">0</div>
+            <div class="stat-label">Total Likes</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💬</div>
+          <div class="stat-info">
+            <div class="js-total-comments stat-number">0</div>
+            <div class="stat-label">Total Comments</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <div class="js-total-followers stat-number">0</div>
+            <div class="stat-label">Followers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- POSTS SECTION -->
+      <div class="posts-section">
+
+        <!-- SECTION HEADER -->
+        <div class="section-header">
+          <div class="section-tabs">
+            <button class="js-dash-tab js-dash-publish dash-tab active" data-tab="publish">
+              Published
+            </button>
+            <button class="js-dash-tab dash-tab" data-tab="draft">
+              Drafts
+            </button>
+          </div>
+
+          <div class="section-actions">
+            <div class="search-wrap">
+              <span class="search-icon">⌕</span>
+              <input
+                type="text"
+                class="js-dash-search dash-search"
+                placeholder="Search your posts..."
+              />
+            </div>
+            <select class="js-dash-sort dash-sort">
+              <option value="latest">Latest</option>
+              <option value="popular">Most Liked</option>
+              <option value="views">Most Viewed</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- POSTS LIST -->
+        <div class="js-dash-posts-list dash-posts-list"></div>
+
+        <!-- LOADING -->
+        <div class="js-dash-loading dash-loading hidden">
+          <div class="loading-spinner"></div>
+          <span>Loading posts...</span>
+        </div>
+
+        <!-- EMPTY STATE — PUBLISHED -->
+        <div class="js-published-empty dash-empty hidden">
+          <div class="empty-icon">✍️</div>
+          <div class="empty-title">No published posts yet</div>
+          <div class="empty-desc">Start writing and share your ideas with the world!</div>
+          <a href="write.html" class="empty-cta">Write your first post</a>
+        </div>
+
+        <!-- EMPTY STATE — DRAFTS -->
+        <div class="js-drafts-empty dash-empty hidden">
+          <div class="empty-icon">📄</div>
+          <div class="empty-title">No drafts saved</div>
+          <div class="empty-desc">Your saved drafts will appear here.</div>
+          <a href="write.html" class="empty-cta">Start a new draft</a>
+        </div>
+
+        <!-- NO RESULTS -->
+        <div class="js-dash-no-results dash-empty hidden">
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title">No posts found</div>
+          <div class="empty-desc">Try a different search term.</div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div class="js-delete-modal delete-modal hidden">
+    <div class="delete-modal-inner">
+      <div class="delete-modal-icon">🗑️</div>
+      <h3 class="delete-modal-title">Delete Post?</h3>
+      <p class="delete-modal-desc">
+        This action cannot be undone. The post will be permanently deleted.
+      </p>
+      <div class="delete-modal-btns">
+        <button class="js-cancel-delete delete-cancel-btn">Cancel</button>
+        <button class="js-confirm-delete delete-confirm-btn">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="js-toast toast hidden"></div>
+
+  <!-- <script type="module" src="js/app.js"></script> -->
+  <script type="module" src="scripts/dashboard.js"></script>
+</body>
+</html>
+

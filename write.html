@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inkwell — Write</title>
+  <link rel="stylesheet" href="write.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Inkwell<span>.</span></a>
+
+      <div class="nav-center">
+        <span class="js-save-status save-status"></span>
+      </div>
+
+      <div class="nav-right">
+        <button class="js-theme-toggle theme-toggle hidden" aria-label="Toggle theme">
+          <span class="dark-icon">☀️</span>
+          <span class="light-icon">🌙</span>
+        </button>
+        <button class="js-preview-btn preview-btn hidden">👁 Preview</button>
+        <button class="js-publish-btn publish-btn">Publish →</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="editor-wrap">
+
+      <!-- COVER IMAGE UPLOAD -->
+      <div class="js-cover-section cover-section">
+        <div class="js-cover-preview cover-preview hidden">
+          <img class="js-cover-img cover-img" src="" alt="cover" />
+          <button class="js-remove-cover remove-cover-btn">✕ Remove</button>
+        </div>
+        <label class="js-cover-upload cover-upload" for="cover-input">
+          <span class="cover-upload-icon">🖼️</span>
+          <span class="cover-upload-text">Add a cover image</span>
+          <input type="file" id="cover-input" class="js-cover-input" accept="image/*" />
+        </label>
+      </div>
+
+      <!-- TITLE -->
+      <textarea
+        class="js-post-title title-input"
+        placeholder="Post title..."
+        rows="1"
+        maxlength="150"
+      ></textarea>
+
+      <!-- EXCERPT -->
+      <textarea
+        class="js-post-excerpt excerpt-input"
+        placeholder="Write a short excerpt or subtitle (optional)..."
+        rows="2"
+        maxlength="300"
+      ></textarea>
+
+      <!-- TOOLBAR -->
+      <div class="js-toolbar toolbar">
+        <div class="toolbar-group">
+          <button class="js-tool-bold tool-btn" data-command="bold"  title="Bold">
+            <strong>B</strong>
+          </button>
+          <button class="js-tool-italic tool-btn" data-command="italic" title="Italic">
+            <em>I</em>
+          </button>
+          <button class="js-tool-underline tool-btn" data-command="underline" title="Underline">
+            <u>U</u>
+          </button>
+          <button class="js-tool-strike tool-btn" data-command="strikeThrough" title="Strikethrough">
+            <s>S</s>
+          </button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+          <button class="js-tool-h1 tool-btn" data-command="h1" title="Heading 1">H1</button>
+          <button class="js-tool-h2 tool-btn" data-command="h2" title="Heading 2">H2</button>
+          <button class="js-tool-h3 tool-btn" data-command="h3" title="Heading 3">H3</button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+          <button class="js-tool-ul tool-btn" data-command="insertUnorderedList" title="Bullet list">
+            ≡
+          </button>
+          <button class="js-tool-ol tool-btn" data-command="insertOrderedList" title="Numbered list">
+            1≡
+          </button>
+          <button class="js-tool-quote tool-btn" data-command="blockquote" title="Blockquote">
+            ❝
+          </button>
+          <button class="js-tool-code tool-btn" data-command="code" title="Inline code">
+            &lt;/&gt;
+          </button>
+          <button class="js-tool-codeblock tool-btn" data-command="codeblock" title="Code block">
+            { }
+          </button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+          <button class="js-tool-link tool-btn hidden" data-command="link" title="Insert link ">
+            🔗
+          </button>
+          <button class="js-tool-image tool-btn hidden" data-command="image" title="Insert image">
+            🖼️
+          </button>
+          <button class="js-tool-hr tool-btn" data-command="hr" title="Horizontal rule">
+            ─
+          </button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+          <button class="js-tool-alignleft tool-btn" data-command="justifyLeft" title="Align left">
+            ◀═
+          </button>
+          <button class="js-tool-aligncenter tool-btn" data-command="justifyCenter" title="Center">
+            ═◆═
+          </button>
+          <button class="js-tool-alignright tool-btn" data-command="justifyRight" title="Align right">
+            ═▶
+          </button>
+        </div>
+
+      </div>
+
+      <!-- EDITOR BODY -->
+      <div
+        class="js-editor editor"
+        contenteditable="true"
+        data-placeholder="Tell your story..."
+      ></div>
+
+
+      
+
+      <!-- WORD COUNT -->
+      <div class="editor-footer">
+        <span class="js-word-count word-count">0 words</span>
+        <span class="js-read-time-estimate read-time-estimate">~0 min read</span>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- PUBLISH MODAL -->
+  <div class="js-publish-modal publish-modal hidden">
+    <div class="publish-modal-inner">
+
+      <div class="publish-modal-header">
+        <h2 class="publish-modal-title">Ready to Publish?</h2>
+        <button class="js-close-publish publish-modal-close">✕</button>
+      </div>
+
+      <div class="publish-modal-body">
+
+        <!-- POST PREVIEW -->
+        <div class="publish-preview">
+          <div class="js-publish-cover publish-cover hidden">
+            <img class="js-publish-cover-img publish-cover-img" src="" alt="" />
+          </div>
+          <div class="publish-preview-info">
+            <div class="publish-preview-label">Preview Title</div>
+            <div class="js-publish-title-preview publish-title-preview"></div>
+            <div class="publish-preview-label">Preview Excerpt</div>
+            <div class="js-publish-excerpt-preview publish-excerpt-preview"></div>
+          </div>
+        </div>
+
+        <!-- CATEGORY -->
+        <div class="form-group">
+          <label class="form-label">Category <span class="required">*</span></label>
+          <select class="js-post-category form-select">
+            <option value="">Select a category</option>
+            <option value="technology">Technology</option>
+            <option value="tutorial">Tutorial</option>
+            <option value="life">Life</option>
+            <option value="design">Design</option>
+            <option value="career">Career</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <!-- TAGS -->
+        <div class="form-group">
+          <label class="form-label">Tags</label>
+          <input
+            type="text"
+            class="js-post-tags-input form-input"
+            placeholder="e.g. javascript, webdev, career"
+          />
+          <span class="form-hint">Separate tags with commas — max 5 tags</span>
+          <div class="js-tags-preview tags-preview"></div>
+        </div>
+
+        <!-- ERROR -->
+        <div class="js-publish-error publish-error hidden"></div>
+
+        <!-- PUBLISH BUTTON -->
+        <div class="publish-modal-btns">
+          <button class="js-save-draft save-draft-btn">💾 Save as Draft</button>
+          <button class="js-confirm-publish confirm-publish-btn">
+            <span class="js-confirm-publish-text">🚀 Publish Now</span>
+            <span class="js-confirm-publish-loading publish-btn-loading hidden">
+              <span class="btn-spinner"></span>
+              Publishing...
+            </span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- LINK MODAL -->
+  <div class="js-link-modal link-modal hidden">
+    <div class="link-modal-inner">
+      <h3 class="link-modal-title">Insert Link</h3>
+      <div class="form-group">
+        <label class="form-label">Link Text</label>
+        <input type="text" class="js-link-text form-input" placeholder="Display text" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL</label>
+        <input type="url" class="js-link-url form-input" placeholder="https://..." />
+      </div>
+      <div class="link-modal-btns">
+        <button class="js-cancel-link link-cancel-btn">Cancel</button>
+        <button class="js-insert-link link-insert-btn">Insert</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="js-toast toast hidden"></div>
+
+  <!-- <script type="module" src="js/app.js"></script> -->
+  <script type="module" src="scripts/write.js"></script>
+</body>
+</html>
+
