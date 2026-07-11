@@ -324,6 +324,7 @@ getComments((comment) => {
 
 
 function displayComment(comments) {
+  console.log(comments)
   let CommentCard = ''
   comments.forEach((comment) => {
     CommentCard +=
