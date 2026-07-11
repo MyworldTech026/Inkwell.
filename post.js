@@ -182,7 +182,6 @@ function displaypost(post) {
 
 // get the bio of the user that make a post that other user view, then display it on the bio section of the post page
 async function getBio(){
-  console.log(postuserid)
   let bio=await getDoc(doc(db,'users',postuserid))
   display(bio.data())
 }
@@ -193,7 +192,7 @@ const bioAvater=document.querySelector('.js-bio-avatar')
  const bioFollower=document.querySelector('.js-bio-followers')
 
 function display(bio){
- // bioAvater.src=bio.profileImageUrl.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)
+  bioAvater.src=bio.profileImageUrl.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)
   bioName.textContent=`${bio.Fname} ${bio.Lname}`
   bioName.href=`profile.html?uid=${postuserid}`
   bioText.textContent=bio.bio
@@ -333,7 +332,7 @@ function displayComment(comments) {
 
   <img 
     class="comment-avatar" 
-    src="${comment.authorAvatar}" 
+    src="${comment.authorAvater.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)}" 
     alt="${comment.authorName}" 
   />
 
