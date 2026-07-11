@@ -324,7 +324,6 @@ getComments((comment) => {
 
 //${comment.authorAvater.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)}
 function displayComment(comments) {
-  console.log(comments)
   let CommentCard = ''
   comments.forEach((comment) => {
     CommentCard +=
