@@ -1,545 +1,359 @@
-import { auth, db } from './config.js'
-import { getDoc,getDocs, doc, collection, addDoc, deleteDoc, onSnapshot, setDoc, updateDoc, increment,query,where ,limit} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-import { watchAuthState, getComments, updateCommentCount, updateLikeCount,updateLikecommentCount, follow, unfollow,
-        updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "./onAuthStateChange_Guard.js"
-const postid = new URLSearchParams(window.location.search).get('id')
+import { auth, db } from "./config.js"
+import { watchAuthState, getPost, getfollowerAndfollowing, uploadProfileImage, getCurrentUser, updateUserDetails, uploadImageToCloudinary, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "../onAuthStateChange_Guard.js"
+import { signOut, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+import { getDoc, doc, getDocs, onSnapshot, collection, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
+
+const profileuid = new URLSearchParams(window.location.search).get(`uid`)
+console.log(profileuid)
+let currentUser;
 let posts;
-let currentuser;
 
-const navAuth = document.querySelector('.js-logged-out')
-const loginToComment = document.querySelector('.js-login-to-comment')
+//LOGOUT STATE
+const logoutstate = document.querySelector('.js-logged-out')
+const signoutBtn = document.querySelector('.js-signout-btn')
+const areUsureBox = document.querySelector('.js-ask-user')
+const Notsure = document.querySelector('.js-no-not-sure')
+const yesSure = document.querySelector('.js-yes-sure')
+const logoutSpinner = document.querySelector('.js-logout-spinner')
 
-//login state
-const navUser = document.querySelector('.js-logged-in ')
-const postCategory = document.querySelector('.js-post-category')
-const postTitle = document.querySelector('.js-post-title')
-const postExcerpt = document.querySelector('.js-post-excerpt')
-const authorName = document.querySelector('.js-author-name')
-const postDate = document.querySelector('.js-post-date')
-const readTime = document.querySelector('.js-read-time ')
-const postViews = document.querySelector('.js-post-views')
-const postTag = document.querySelector('.js-post-tags')
-const postBody = document.querySelector('.js-post-body')
-const editpost = document.querySelector('.js-edit-post-btn')
-const deletepost = document.querySelector('.js-delete-post-btn')
-const deletemodal = document.querySelector('.js-delete-modal')
-const cancelDeletebtn = document.querySelector('.js-cancel-delete')
-const yesDeleteBtn = document.querySelector('.js-confirm-delete')
-const dropComment = document.querySelector('.js-comment-input')
-const postComment = document.querySelector('.js-submit-comment')
-const commentCount = document.querySelector('.js-comment-count')
-const commentBadge = document.querySelector('.js-comments-count')
-const shareBtn = document.querySelector('.js-share-btn')
-const shareDropDown = document.querySelector('.js-share-dropdown')
-const likeCount = document.querySelector('.js-like-count')
-const link = document.querySelector('.login-comment-link')
-//follow button
+//LOGIN STATE
+const loginstate = document.querySelector('.js-logged-in ')
+const userAvaterbtn = document.querySelector('.js-user-avatar')
+const profiledropdown = document.querySelector('.js-user-dropdown')
 const followBtn = document.querySelector('.js-follow-btn')
+const editProfilebtn = document.querySelector('.js-edit-profile-btn')
+const editProfileForm = document.querySelector('.js-edit-form')
+const postCardDiv = document.querySelector('.js-profile-posts-list')
+const totalPost = document.querySelector('.js-posts-tab-count')
+const totalLikeCount = document.querySelector('.js-liked-tab-count')
+const following = document.querySelector('.js-profile-following')
+const follower = document.querySelector('.js-profile-followers')
+const totalProfilePost = document.querySelector('.js-profile-posts')
+const uploadImageLabel = document.querySelector('.js-edit-avatar-btn')
 
 
-let copyLinkBtn = document.querySelector('.js-copy-link')
-const shareToX=document.querySelector('.js-share-to-x')
-const shareToWhatsapp=document.querySelector('.js-share-to-whatsapp')
-let toast = document.querySelector('.js-toast')
+//EDITPROFILEBTN 
+const canceleditbtn = document.querySelector('.js-cancel-edit')
+const saveeditbtn = document.querySelector('.js-save-profile')
 
-let share = false
-// share button
-shareBtn.addEventListener('click', () => {
-  if (!share) {
-    shareDropDown.classList.remove('hidden')
-    share = true
+
+let click = false
+userAvaterbtn.addEventListener('click', () => {
+  if (!click) {
+    profiledropdown.classList.remove('hidden')
+    click = true
   } else {
-    shareDropDown.classList.add('hidden')
-    share = false
+    profiledropdown.classList.add('hidden')
+    click = false
   }
 })
 
-//copy link button
-copyLinkBtn.addEventListener('click', () => {
-  let url = window.location.href
-  navigator.clipboard.writeText(url)
-  shareDropDown.classList.add('hidden')
-  toast.classList.remove('hidden')
-  toast.textContent = `copied`
-  share = false
-  setTimeout(() => {
-    toast.classList.add('hidden')
-  }, 3000)
-})
+let likedPost;
 
-shareToX.addEventListener('click',()=>{
-  const postTitle=singlePost.title
-  const postUrl=window.location.href
-  const twitterUrl=`https://twitter.com/intent/tweet?text=${encodeURIComponent(postTitle)}$url=${encodeURIComponent(postUrl)}`
-  shareToX.href=twitterUrl
-})
-
-shareToWhatsapp.addEventListener('click',()=>{
-   const postTitle=singlePost.title
-  const postUrl=window.location.href
-  const whatsappUrl=`https://wa.me/?text=${encodeURIComponent(postTitle + ' ' +postUrl)}`
-  shareToWhatsapp.href=whatsappUrl
-})
-
-// sidebar copy link logic
-const sideBarCopyLink=document.querySelector('.js-sidebar-share')
-
- sideBarCopyLink.addEventListener('click',()=>{
-  let url = window.location.href
-  navigator.clipboard.writeText(url)
-  shareDropDown.classList.add('hidden')
-  toast.classList.remove('hidden')
-  toast.textContent = `copied`
-  share = false
-  setTimeout(() => {
-    toast.classList.add('hidden')
-  }, 3000)
- })
-
-
-loginToComment.addEventListener('click', () => {
-  window.location.href = `auth.html?id=${postid}`
-})
-
-
-
-let postuserid;
-// check if a user is login or logout
+const profileLink = document.querySelector('.js-profile-link')
+const dashboardlink = document.querySelector('.js-dashboard-link')
 watchAuthState(
   async (user) => {
-    currentuser = user
-    await checkIfLiked()
-    navUser.classList.add('hidden')
-    navAuth.classList.add('hidden')
-    await getSinglePost( async(post) => {
-      // postuserid=post.authorId
-      posts = post
-      if (user.uid === post.authorId) {
-        editpost.classList.remove('hidden')
-        deletepost.classList.remove('hidden')
-        followBtn.classList.add('hidden')
-      }
-       await getBio()
-       await moreFromThisAuthor()
-      displaypost(post)
-    })
+    currentUser = user
+    likedPost = await getAllLikedPost()
+    profileLink.href = `profile.html?uid=${user.uid}`
+    dashboardlink.href = `dashboard.html?uid=${user.uid}`
+    if (user.uid === profileuid) {
+      followBtn.classList.add('hidden')
+      editProfilebtn.classList.remove('hidden')
+      uploadImageLabel.classList.remove('hidden')
+    }
+    loginstate.classList.remove('hidden')
+    logoutstate.classList.add('hidden')
   },
   async () => {
-    await getSinglePost(async(post) => {
-      //postuserid=post.authoruid
-      posts = post
-      await getBio()
-      await moreFromThisAuthor()
-      displaypost(post)
-    })
-    editpost.classList.add('hidden')
-    deletepost.classList.add('hidden')
-    loginToComment.classList.remove('hidden')
-    link.href = `auth.html?id=${postid}`
-    navUser.classList.add('hidden')
-    navAuth.classList.remove('hidden')
+    //  profileLink.href=`profile.html?uid=${user.uid}`
+    likedPost = await getAllLikedPost()
+    loginstate.classList.add('hidden')
+    logoutstate.classList.remove('hidden')
   }
 )
 
-let singlePost;
-//get a single post and display it in real time even when login or logout
-function getSinglePost(callback) {
-  onSnapshot(doc(db, 'post', postid), (snapshot) => {
-    singlePost = snapshot.data()
-     postuserid= singlePost.authorId
-    callback(snapshot.data())
+
+
+if (profileuid) {
+  getPost((post) => {
+    posts = post.filter((post) => {
+      return post.authorId === profileuid && post.status === `publish`
+    })
+    totalProfilePost.textContent = posts.length
     checkAndfollow()
-    checkifViewed()
+    displayPost(posts)
+    totalFollowerAndfollow(profileuid)
+    autoLoaduserBio(profileuid)
+  })
+} else {
+  getPost((post) => {
+    posts = post.filter((post) => {
+      return post.authorId === currentUser.uid && post.status === `publish`
+    })
+    totalProfilePost.textContent = posts.length
+    checkAndfollow()
+    displayPost(posts)
+    totalFollowerAndfollow(currentUser.uid)
+    autoLoaduserBio(currentUser.uid)
   })
 }
 
-const coverImageDiv = document.querySelector('.js-cover-image-wrap')
-const coverImage = document.querySelector('.js-cover-image')
-const sidebarlikecount=document.querySelector('.js-sidebar-like-count')
-const coverimglink=document.querySelector('.js-post-author-link')
-const authorAvatar=document.querySelector('.js-author-avatar')
-//display getSinglePost
-function displaypost(post) {
-  post.coverImageUrl ? coverImageDiv.classList.remove('hidden') : coverImageDiv.classList.add('hidden')
-  authorAvatar.src=post.authorAvater.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)
-   coverImage.src=  post.coverImageUrl?post.coverImageUrl.replace('/upload/', `/upload/w_1200,c_scale/`):''
-  postCategory.textContent = post.category
-  postTitle.textContent = post.title
-  postExcerpt.textContent = post.excerpt
-  authorName.textContent = post.authorName
-  authorName.href=`profile.html?uid=${postuserid}`
-  coverimglink.href=`profile.html?uid=${postuserid}`
-  postDate.textContent = post.createdAt
-  readTime.textContent = `${post.readTime} min`
-  postViews.textContent = `${post.views} views`
-  postTag.textContent = post.tags
-  postBody.innerHTML = post.content
-  commentCount.textContent = post.comments
-  commentBadge.textContent = post.comments
-  likeCount.textContent = post.likes
-  sidebarlikecount.textContent=post.likes
-}
+const emptypost = document.querySelector('.js-posts-empty')
+const emptyPostLiked = document.querySelector('.js-liked-empty')
 
-
-
-// get the bio of the user that make a post that other user view, then display it on the bio section of the post page
-async function getBio(){
-  let bio=await getDoc(doc(db,'users',postuserid))
-  display(bio.data())
-}
-
-const bioAvater=document.querySelector('.js-bio-avatar')
- const bioName=document.querySelector('.js-bio-name')
- const bioText=document.querySelector('.js-bio-text')
- const bioFollower=document.querySelector('.js-bio-followers')
-
-function display(bio){
-  bioAvater.src=bio.profileImageUrl.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)
-  bioName.textContent=`${bio.Fname} ${bio.Lname}`
-  bioName.href=`profile.html?uid=${postuserid}`
-  bioText.textContent=bio.bio
-  bioFollower.textContent=`${bio.followers} followers`
-}
-
-// more from this author logic
-const moreCard=document.querySelector('.js-more-posts')
-async function moreFromThisAuthor() {
-  const querys= query(collection(db,'post'),
-      where (`authorId`, `==`, postuserid),
-      where(`status`, `==`,`publish`),
-      limit(4)
-    )
-  const more=await getDocs(querys)
-   const morePost=more.docs.map((doc)=>{
-    return {
-      id:doc.id,
-      ...doc.data()
-    }
-   }).filter(p=>p.id !== postid)
-  displayMoreFromAuthor(morePost)
-}
-
-function displayMoreFromAuthor(moreFromAuthor){
-  if(moreFromAuthor.length===0){
-    moreCard.textContent=`Noting to show yet`
+function displayPost(posts) {
+  if (posts.length === 0) {
+    postCardDiv.innerHTML = ''
+    emptypost.classList.remove('hidden')
+    emptyPostLiked.classList.add('hidden')
     return
   }
- let eachMoreCard=''
-  moreFromAuthor.forEach((post)=>{
-     eachMoreCard+=`
-     <a href="post.html?id=${post.id}" class="more-post-item">
-
-  <div class="more-post-title">${post.title}</div>
-
-  <div class="more-post-meta">
-    ${post.readTime} min read ·  ${post.likes === 0 ? `🤍 ${post.likes}` : `❤️ ${post.likes}`}
-  </div>
-
-</a>
-     `
-  })
-   moreCard.innerHTML=eachMoreCard  
-}
-
-async function checkifViewed() {
-  if (!currentuser) return
-  const viewed = await getDoc(doc(db, 'post', postid, 'views', currentuser.uid))
-  if (viewed.exists()) {
-    return
-  } else {
-    await setDoc(doc(db, 'post', postid, 'views', currentuser.uid), { viewedAt: new Date().toISOString() })
-    await updateDoc(doc(db, 'post', postid), { views: increment(1) })
-  }
-}
-
-
-
-
-
-editpost.addEventListener('click', () => {
-  editpost.href = `write.html?id=${postid}`
-})
-
-deletepost.addEventListener('click', () => {
-  deletemodal.classList.remove('hidden')
-})
-
-cancelDeletebtn.addEventListener('click', () => {
-  deletemodal.classList.add('hidden')
-})
-
-yesDeleteBtn.addEventListener('click', () => {
-  deletePost()
-})
-
-// delete post
-async function deletePost() {
-  await deleteDoc(doc(db, 'post', postid))
-  window.location.href = `index.html`
-}
-
-
-postComment.addEventListener('click', () => {
-  if(!currentuser){
-     alert(`sign in to perform any activity`)
-    return
-  }
-  const comment = dropComment.value
-  if (!comment) return
-  getCurrentUser().then((user) => {
-    let Comment = {
-      text: comment,
-      authorId: currentuser.uid,
-      authorName: `${user.Fname} ${user.Lname}`,
-      authorAvater: user.profileImageUrl ,
-      createdAt: new Date().toISOString(),
-      like: 0
-    }
-    createComment(Comment)
-    dropComment.value = ''
-  })
-
-})
-
-async function createComment(comment) {
-  await addDoc(collection(db, 'post', postid, 'comments'), comment)
-  updateCommentCount(postid, 1)
-}
-
-
-// get currently login user details in order for me to get the user name
-// pass the user name into the comment the user make
-async function getCurrentUser() {
-  const uid = currentuser.uid
-  const user = await getDoc(doc(db, 'users', uid))
-  return user.data()
-}
-
-
-
-const commentContainer = document.querySelector('.js-comments-list')
-let allComments = []
-
-getComments((comment) => {
-  allComments = comment
-  displayComment(comment)
-}, postid)
-
-
-function displayComment(comments) {
-  let CommentCard = ''
-  comments.forEach((comment) => {
-    CommentCard +=
+  emptypost.classList.add('hidden')
+  emptyPostLiked.classList.add('hidden')
+  let postCard = ''
+  posts.forEach((post) => {
+    postCard +=
       `
-<div class="js-comment-card comment-card" data-id="${comment.id}">
+    <div class="profile-post-card" data-id="${post.id}">
 
-  <img 
-    class="comment-avatar" 
-    src="${comment.authorAvater.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)}" 
-    alt="${comment.authorName}" 
-  />
+  <!-- POST CONTENT -->
+  <div class="post-content">
 
-  <div class="comment-body">
-    <div class="comment-header">
-      <span class="comment-author">${comment.authorName}</span>
-      <span class="comment-date">${comment.createdAt}</span>
+    <div class="post-category">${post.category}</div>
+
+    <a href="post.html?id=${post.id}" class="post-title">
+      ${post.title}
+    </a>
+
+    <p class="post-excerpt">${post.excerpt}</p>
+
+    <div class="post-footer">
+      <span class="post-date">${post.createdAt}</span>
+      <span class="post-read-time">⏱ ${post.readTime} min read</span>
+      <span class="post-likes"> ${post.likes === 0 ? `🤍 ${post.likes}` : `❤️ ${post.likes}`}</span>
     </div>
 
-    <p class="comment-text">${comment.text}</p>
-
-    <div class="comment-actions">
-      <button class="js-comment-like-btn comment-like-btn">${comment.like === 0 ? `🤍 ${comment.like}` : `❤️ ${comment.like}`}</button>
-      <button class="comment-reply-btn hidden">Reply</button>
-      <!-- Only show delete if current user wrote this comment -->
-
-      ${showdeletecommentbutton(comment)}
-    </div>
   </div>
+
+  <!-- THUMBNAIL -->
+  <a href="post.html?id=${post.id}" class="post-thumb-wrap">
+    <img
+      class="post-thumb"
+      src="${post.coverImageUrl ? post.coverImageUrl.replace('/upload/', `/upload/w_600,h_400,c_fill,g_auto/`) : ''}"
+      alt=""
+      loading="lazy"
+    />
+  </a>
 
 </div>
-
-`
-
+    `
+    // totalLike += post.likes
   })
-  commentContainer.innerHTML = CommentCard
+  //totalLikeCount.textContent = totalLike
+  postCardDiv.innerHTML = postCard
 }
 
-// like comment logic
-// if(currentuser.uid){
-  
-// }
-//const likeCommentbtn=document.querySelector('.js-comment-like-btn')
-
-commentContainer.addEventListener('click',async(e)=>{
-  if(!currentuser){
-     alert(`sign in to perform any activity`)
-    return
-  }
-const likeCommentbtn=e.target.closest('.js-comment-like-btn')
-if(!likeCommentbtn)return
-const eachCard=likeCommentbtn.closest('.js-comment-card')
-const commentid=eachCard.dataset.id 
-await checkIfLikedComment(commentid)
-likeComment(commentid)
-})
-
-let  isLikedcomment;
-async function checkIfLikedComment(commentid) {
-  const likecomment = await getDoc(doc(db, 'post', postid, 'comments',commentid,'likes', currentuser.uid))
-  if (likecomment.exists()) {
-    isLikedcomment = true
-  }
-  else {
-    isLikedcomment = false
-  }
-}
-
-
-async function likeComment(commentid){
-    const likecommenticon=document.querySelector('.js-comment-like-btn')
-   if ( isLikedcomment) {
-    await deleteDoc(doc(db, 'post', postid, 'comments',commentid,'likes', currentuser.uid))
-    updateLikecommentCount(postid,commentid, -1)
-    isLiked = false
-  }
-  else {
-    await setDoc(doc(db, 'post', postid, 'comments',commentid,'likes', currentuser.uid), {
-      likedAt: new Date().toISOString()
-    })
-    await updateLikecommentCount(postid,commentid, 1)
-    isLiked = true
-  }
-}
-
-
-function showdeletecommentbutton(comment) {
-  if (currentuser && currentuser.uid === comment.authorId) {
-    return `
-        <button class="comment-delete-btn js-delete-comment"
-        data-id="${comment.id}">
-        Delete
-      </button>
-      `
+let isedit = false
+editProfilebtn.addEventListener('click', () => {
+  if (!isedit) {
+    editProfileForm.classList.remove('hidden')
+    isedit = true
   } else {
-    return `
-        <button class="comment-delete-btn js-delete-comment hidden"
-        data-id="${comment.id}">
-        Delete
-      </button>
-      `
+    editProfileForm.classList.add('hidden')
+    isedit = false
   }
-}
 
-// like comment logic
-commentContainer.addEventListener('click', (e) => { 
-  const deletecommentbtn = e.target.closest('.js-delete-comment')
-  if (!deletecommentbtn) return
-  const deleteCommentId = deletecommentbtn.dataset.id
-  deleteComment(deleteCommentId)
 })
 
 
-async function deleteComment(deleteid) {
-  await deleteDoc(doc(db, 'post', postid, 'comments', deleteid))
-  updateCommentCount(postid, -1)
+// EDIT PROFILE FORM
+
+const displayName = document.querySelector('.js-edit-name')
+const Bio = document.querySelector('.js-edit-bio')
+const X = document.querySelector('.js-edit-twitter')
+const Github = document.querySelector('.js-edit-github')
+const Website = document.querySelector('.js-edit-website ')
+
+
+// save user bio update
+saveeditbtn.addEventListener('click', async () => {
+  await getCurrentUser(profileuid, (user) => {
+    const currentUser = user.user
+
+    const userName = displayName.value === '' ? currentUser.userName : displayName.value
+    const bio = Bio.value === '' ? currentUser.bio : Bio.value
+    const x_handle = X.value === '' ? currentUser.x_handle : X.value
+    const github = Github.value === '' ? currentUser.github : Github.value
+    const website = Website.value === '' ? Website.value : currentUser.website
+
+    const updateUserData = {
+      userName,
+      bio,
+      x_handle,
+      github,
+      website
+    }
+    console.log(updateUserData)
+    updateUserDetails(profileuid, updateUserData)
+    editProfileForm.classList.add('hidden')
+    isedit = false
+  })
+})
+
+// PROFILE INFO 
+const profileName = document.querySelector('.js-profile-name')
+const username = document.querySelector('.js-profile-username')
+const profileBio = document.querySelector('.js-profile-bio')
+const socialLinks = document.querySelector('.js-profile-socials')
+const dateJoined = document.querySelector('.js-profile-joined ')
+
+async function autoLoaduserBio(uid) {
+  await getCurrentUser(uid, (current) => {
+    let currentUser = current.user
+    let socials = [currentUser.x_handle, currentUser.github, currentUser.website]
+
+    displayName.value = currentUser.userName
+    Bio.value = currentUser.bio
+    X.value = currentUser.x_handle
+    Github.value = currentUser.github
+    Website.value = currentUser.website
+    profileName.textContent = `${currentUser.Fname} ${currentUser.Lname}`
+    username.textContent = currentUser.userName
+    profileBio.textContent = currentUser.bio
+
+    socialLinks.innerHTML = displaySocials(socials)
+  })
+
+}
+
+function displaySocials(socials) {
+  let socialHandle = ''
+  socials.forEach((social) => {
+    socialHandle += social ? `<a href="${social}" class="post-title">${social}</a>` : ''
+  })
+  return socialHandle
+}
+
+
+canceleditbtn.addEventListener('click', () => {
+  editProfileForm.classList.add('hidden')
+  isedit = false
+})
+
+
+
+async function totalFollowerAndfollow(uid) {
+  await getfollowerAndfollowing(uid, (folAndfollowing) => {
+    //console.log(folAndfollowing.followers)
+    follower.textContent = folAndfollowing.followers
+    following.textContent = folAndfollowing.following
+  })
 }
 
 
 
-//LIKE AND UNLIKE LOGIC
 
-const likeBtn = document.querySelector('.js-like-btn')
-const likeIcon = document.querySelector('.js-like-icon')
-const sideBarLikeBtn=document.querySelector('.js-sidebar-like')
-const sidebarlikeicon=document.querySelector('.js-sidebar-like-icon')
-let isLiked;
 
-async function checkIfLiked() {
-  const like = await getDoc(doc(db, 'post', postid, 'likes', currentuser.uid))
-  if (like.exists()) {
-    likeBtn.classList.add('liked')
-    likeIcon.textContent = '❤️'
-    sidebarlikeicon.textContent = '❤️'
-    isLiked = true
+
+signoutBtn.addEventListener('click', () => {
+  userAvaterbtn.disabled = true
+  profiledropdown.classList.add('hidden')
+  areUsureBox.classList.remove('hidden')
+})
+
+Notsure.addEventListener('click', () => {
+  areUsureBox.classList.add('hidden')
+  profiledropdown.classList.remove('hidden')
+  userAvaterbtn.disabled = false
+})
+
+yesSure.addEventListener('click', () => {
+  areUsureBox.classList.add('hidden')
+  profiledropdown.classList.remove('hidden')
+  logoutSpinner.classList.remove('hidden')
+  signoutBtn.classList.add('hidden')
+  userAvaterbtn.disabled = false
+
+  setTimeout(() => {
+    logOut()
+  }, 3000)
+
+})
+
+
+async function logOut() {
+  try {
+    await signOut(auth)
+    window.location.href = 'index.html'
   }
-  else {
-    likeBtn.classList.remove('liked')
-    likeIcon.textContent = '🤍'
-    sidebarlikeicon.textContent = '🤍'
-    isLiked = false
+  catch (error) {
+    console.log(error)
   }
- // console.log(isLiked)
 }
 
+const uploadAvaterBtn = document.querySelector('.js-avatar-input')
+
+//upload profile picture
+uploadAvaterBtn.addEventListener('change', async (e) => {
+  const file = e.target.files[0]
+  const imageUrl = await uploadImageToCloudinary(file)
+  await uploadProfileImage(profileuid, imageUrl)
+})
 
 
-likeBtn.addEventListener('click', async () => {
-  if(!currentuser){
-    alert(`sign in to perform any activity`)
+
+
+
+const image = document.querySelector('.js-profile-avatar')
+const navdropdown = document.querySelector('.js-nav-avatar')
+// getCurrentUser(profileuid).then((user) => {
+//   const profilePic = user.user.profileImageUrl
+//   const resizeUrl = profilePic.replace('/upload/', `/upload/w_400,q_auto,f_auto/`)
+//   image.src = resizeUrl
+// })
+let currentuserPic;
+async function getCurrentUserprofilePic() {
+  if (currentUser) {
+    const pic = await getDoc(doc(db, 'users', currentUser.uid))
+    currentuserPic = pic.data().profileImageUrl
+  }
+
+}
+
+getCurrentUser(profileuid, async (current) => {
+  await getCurrentUserprofilePic()
+  const profilePic = current.user.profileImageUrl
+  const resizeUrl = profilePic.replace('/upload/', `/upload/w_400,q_auto,f_auto/`)
+  image.src = resizeUrl
+  if (currentUser.uid !== profileuid) {
+    navdropdown.src = currentuserPic
     return
   }
-  if (isLiked) {
-    await deleteDoc(doc(db, 'post', postid, 'likes', currentuser.uid))
-    updateLikeCount(postid, -1)
-    likeBtn.classList.remove('liked')
-    sidebarlikeicon.textContent = '🤍'
-    likeIcon.textContent = '🤍'
-    isLiked = false
-  }
-  else {
-    await setDoc(doc(db, 'post', postid,'likes', currentuser.uid), {
-      likedAt: new Date().toISOString()
-    })
-    await updateLikeCount(postid, 1)
-    likeBtn.classList.add('liked')
-   sidebarlikeicon.textContent = '❤️'
-     likeIcon.textContent = '❤️'
-    isLiked = true
-  }
-})
-
-// sidebar click
-sideBarLikeBtn.addEventListener('click',async()=>{
-   if (isLiked) {
-    await deleteDoc(doc(db, 'post', postid, 'likes', currentuser.uid))
-    updateLikeCount(postid, -1)
-    likeBtn.classList.remove('liked')
-    sidebarlikeicon.textContent = '🤍'
-      likeIcon.textContent = '🤍'
-    isLiked = false
-  }
-  else {
-    await setDoc(doc(db, 'post', postid, 'likes', currentuser.uid), {
-      likedAt: new Date().toISOString()
-    })
-    await updateLikeCount(postid, 1)
-    likeBtn.classList.add('liked')
-    sidebarlikeicon.textContent = '❤️'
-     likeIcon.textContent = '❤️'
-    isLiked = true
-  }
+  navdropdown.src = resizeUrl
 })
 
 
 
+//const followBtn=document.querySelector('.js-follow-btn')
 
-
-let following;
+let followings;
 async function checkIfFollower() {
-  const follower = await getDoc(doc(db, 'users', singlePost.authorId, 'followers', currentuser.uid))
 
+  const follower = await getDoc(doc(db, 'users', profileuid, 'followers', currentUser.uid))
   if (follower.exists()) {
     followBtn.textContent = `Following`
-    following = true
+    followings = true
   } else {
     followBtn.textContent = `Follow`
-    following = false
+    followings = false
   }
 }
 
 async function checkAndfollow() {
-  if (currentuser && currentuser.uid !== singlePost.authorId) {
+  if (currentUser && currentUser.uid !== profileuid) {
     await checkIfFollower()
   }
 }
@@ -547,16 +361,265 @@ async function checkAndfollow() {
 
 
 followBtn.addEventListener('click', async () => {
-  if (following) {
-    await unfollow(singlePost.authorId, currentuser.uid)
-    await updateAuthorfollowersCount(singlePost.authorId, -1)
-    await updateCurrentuserfolloweringCount(currentuser.uid, -1)
+  if (followings) {
+    await unfollow(profileuid, currentUser.uid)
+    await updateAuthorfollowersCount(profileuid, -1)
+    await updateCurrentuserfolloweringCount(currentUser.uid, -1)
     checkAndfollow()
   } else {
-    await follow(singlePost.authorId, currentuser.uid)
-    await updateAuthorfollowersCount(singlePost.authorId, 1)
-    await updateCurrentuserfolloweringCount(currentuser.uid, 1)
+    await follow(profileuid, currentUser.uid)
+    await updateAuthorfollowersCount(profileuid, 1)
+    await updateCurrentuserfolloweringCount(currentUser.uid, 1)
     checkAndfollow()
   }
 
 })
+
+
+const post_likebtn = document.querySelectorAll('.js-profile-tab')
+post_likebtn.forEach((button) => {
+  button.addEventListener('click', () => {
+    post_likebtn.forEach((tab) => {
+      tab.classList.remove('active')
+    })
+    button.classList.add('active')
+    const type = button.dataset.tab
+    if (type === `posts`) {
+      displayPost(posts)
+    } else {
+      displayAllLikedPost(likedPost)
+    }
+  })
+})
+
+
+// get all post the current user has ever liked
+async function getAllLikedPost() {
+  //postCardDiv.innerHTML = ''
+  try {
+    const allLikedPost = await getDocs(collection(db, 'post'))
+    let likedPost = []
+
+    for (const postDoc of allLikedPost.docs) {
+      const likeref = doc(db, 'post', postDoc.id, 'likes', profileuid)
+      onSnapshot(likeref, (snapshot) => {
+        const likesnap = snapshot.data()
+        if (likesnap) {
+          likedPost.push({
+            id: postDoc.id,
+            ...postDoc.data()
+          })
+        }
+      })
+    }
+
+    likedPost = likedPost.filter((post) => post.authorId !== profileuid)
+    return likedPost
+  }
+  catch (error) {
+    alert(`An error occur\nRefresh the page`)
+  }
+}
+
+
+//display all liked post by the user
+function displayAllLikedPost(allLikedPost) {
+  console.log(allLikedPost)
+  if (allLikedPost.length === 0) {
+    postCardDiv.innerHTML = ''
+    emptyPostLiked.classList.remove('hidden')
+    emptypost.classList.add('hidden')
+    return
+  }
+  emptyPostLiked.classList.add('hidden')
+  emptypost.classList.add('hidden')
+  let likedpost = ''
+  allLikedPost.forEach((post) => {
+    likedpost += `
+      <div class="profile-post-card" data-id="${post.id}">
+
+  <!-- POST CONTENT -->
+  <div class="post-content">
+
+    <!-- AUTHOR ROW — show who wrote the post -->
+    <div class="post-author-row">
+      <img
+        class="post-author-avatar"
+        src="${post.authorAvater.replace('/upload/', `/upload/w_80,h_80,c_fill,g_face/`)}"
+        alt=""
+      />
+      <a
+        href="profile.html?uid=${post.authorId}"
+        class="post-author-name"
+      >
+        ${post.authorName}
+      </a>
+    </div>
+
+    <div class="post-category">${post.category}</div>
+
+    <a href="post.html?id=${post.id}" class="post-title">
+      ${post.title}
+    </a>
+
+    <p class="post-excerpt">${post.excerpt}</p>
+
+    <div class="post-footer">
+      <span class="post-date">${post.createdAt}</span>
+      <span class="post-read-time">⏱ ${post.readTime} min read</span>
+      <span class="post-likes">❤️ ${post.likes}</span>
+    </div>
+
+  </div>
+
+  <!-- THUMBNAIL -->
+  <a href="post.html?id=${post.id}" class="post-thumb-wrap">
+    <img
+      class="post-thumb"
+      src="${post.coverImageUrl ? post.coverImageUrl.replace('/upload/', `/upload/w_600,h_400,c_fill,g_auto/`) : ''}"
+      alt=""
+      loading="lazy"
+    />
+  </a>
+
+</div>
+
+    `
+  })
+  postCardDiv.innerHTML = likedpost
+}
+
+const deleteAccount = document.querySelector('.js-delete-user-btn')
+const confirmPasswordModal = document.querySelector('.js-password-confirm-modal')
+const verifyPasswordBtn = document.querySelector('.js-verify-password')
+const verifyPasswordModalError = document.querySelector('.js-password-modal-error')
+const closeverifyPasswordBtn = document.querySelector('.js-close-password-modal')
+const passwordInput = document.querySelector('.js-confirm-password-input')
+const finalWarning = document.querySelector('.js-delete-warning-modal')
+const deleteMyAccountBtn = document.querySelector('.js-confirm-delete-account')
+const No_deleteUserAccount = document.querySelector('.js-cancel-delete-account')
+const cancelVerifyPasswordModal = document.querySelector('.js-cancel-password-modal')
+
+let google = false
+
+deleteAccount.addEventListener('click', async () => {
+  const providerId = currentUser.providerData[0]?.providerId
+  if (providerId === `password`) {
+    confirmPasswordModal.classList.remove('hidden')
+  }
+  else if (providerId === `google.com`) {
+    google = true
+    finalWarning.classList.remove('hidden')
+  }
+})
+
+//START
+// works if user login with password and email
+verifyPasswordBtn.addEventListener('click', () => {
+  const password = passwordInput.value.trim()
+  reauthenticateuser(password)
+  passwordInput.value = ''
+})
+
+//close confirm password close modal
+closeverifyPasswordBtn.addEventListener('click', () => {
+  confirmPasswordModal.classList.add('hidden')
+  passwordInput.value = ''
+})
+
+//close confirm password close modal
+cancelVerifyPasswordModal.addEventListener('click', () => {
+  confirmPasswordModal.classList.add('hidden')
+  passwordInput.value = ''
+})
+
+
+async function reauthenticateuser(password) {
+  try {
+    const credentials = EmailAuthProvider.credential(currentUser.email, password)
+    const p = await reauthenticateWithCredential(currentUser, credentials)
+    verifyPasswordModalError.classList.add('hidden')
+    finalWarning.classList.remove('hidden')
+  }
+  catch (error) {
+    console.log(error.message)
+    if (error.code === `auth/invalid-credential`) {
+      verifyPasswordModalError.classList.remove('hidden')
+      verifyPasswordModalError.textContent = `Wrong password`
+    }
+  }
+}
+
+
+//trigger deleteuserdata and as well delete a user
+deleteMyAccountBtn.addEventListener('click', async () => {
+  if (google) {
+    reauthWithgooglebeforedeleting()
+    finalWarning.classList.add('hidden')
+  } else {
+    await deleteUser(currentUser)
+    deleteUserData()
+  }
+
+})
+
+// dont delete account
+No_deleteUserAccount.addEventListener('click', () => {
+  finalWarning.classList.add('hidden')
+})
+
+//END
+
+//delete user account with all there post/data
+async function deleteUserData() {
+  await deleteDoc(doc(db, 'users', currentUser.uid))
+  const q = query(collection(db, 'post'),
+    where(`authorId`, `==`, currentUser.uid))
+
+  const userpost = await getDocs(q)
+  for (const postDoc of userpost.docs) {
+    await deleteDoc(postDoc.ref)
+  }
+  window.location.href = `index.html`
+}
+
+// if provider is google.com
+
+async function reauthWithgooglebeforedeleting() {
+  try {
+    const credentials = new GoogleAuthProvider()
+    const p = await reauthenticateWithPopup(currentUser, credentials)
+    await deleteUser(currentUser)
+    deleteUserData()
+  }
+  catch (error) {
+    console.log(error)
+    alert(`Something went wrong\nTry Again`)
+  }
+}
+
+
+
+// START
+const confirm_view_unview = document.querySelector('.js-toggle-confirm-password')
+const passwordfield = document.querySelector('.js-confirm-password-input')
+const showIcon = document.querySelector('.js-show-icon')
+const hideIcon = document.querySelector('.js-hide-icon')
+
+
+confirm_view_unview.addEventListener('click', () => {
+  viewAndUnviewpassword(passwordfield, showIcon, hideIcon)
+})
+
+function viewAndUnviewpassword(password, show, hide) {
+  password.type = password.type === `password` ? `text` : `password`
+  if (password.type === `text`) {
+    show.classList.add('hidden')
+    hide.classList.remove('hidden')
+  } else {
+    show.classList.remove('hidden')
+    hide.classList.add('hidden')
+  }
+}
+//END
+
