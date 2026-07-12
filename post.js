@@ -1,6 +1,7 @@
 import { auth, db } from './config.js'
 import { getDoc,getDocs, doc, collection, addDoc, deleteDoc, onSnapshot, setDoc, updateDoc, increment,query,where ,limit} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-import { watchAuthState, getComments, updateCommentCount, updateLikeCount,updateLikecommentCount, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "../onAuthStateChange_Guard.js"
+import { watchAuthState, getComments, updateCommentCount, updateLikeCount,updateLikecommentCount, follow, unfollow,
+        updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "./onAuthStateChange_Guard.js"
 const postid = new URLSearchParams(window.location.search).get('id')
 
 let posts;
