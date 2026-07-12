@@ -185,7 +185,6 @@ function displaypost(post) {
 
 // get the bio of the user that make a post that other user view, then display it on the bio section of the post page
 async function getBio(){
-  console.log(postuserid)
   let bio=await getDoc(doc(db,'users',postuserid))
   display(bio.data())
 }
@@ -329,7 +328,6 @@ getComments((comment) => {
 
 
 function displayComment(comments) {
-  console.log(comments)
   let CommentCard = ''
   comments.forEach((comment) => {
     CommentCard +=
