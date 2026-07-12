@@ -1,4 +1,4 @@
-import { auth, db } from '../config.js'
+import { auth, db } from './config.js'
 import { getDoc,getDocs, doc, collection, addDoc, deleteDoc, onSnapshot, setDoc, updateDoc, increment,query,where ,limit} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 import { watchAuthState, getComments, updateCommentCount, updateLikeCount,updateLikecommentCount, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "../onAuthStateChange_Guard.js"
 const postid = new URLSearchParams(window.location.search).get('id')
@@ -112,7 +112,7 @@ watchAuthState(
     navUser.classList.add('hidden')
     navAuth.classList.add('hidden')
     await getSinglePost( async(post) => {
-       postuserid=post.authorId
+      // postuserid=post.authorId
       posts = post
       if (user.uid === post.authorId) {
         editpost.classList.remove('hidden')
@@ -166,8 +166,8 @@ function displaypost(post) {
   postTitle.textContent = post.title
   postExcerpt.textContent = post.excerpt
   authorName.textContent = post.authorName
-  authorName.href=`profile.html?uid=${currentuser?currentuser.uid:postuserid}`
-  coverimglink.href=`profile.html?uid=${currentuser?currentuser.uid:postuserid}`
+  authorName.href=`profile.html?uid=${postuserid}`
+  coverimglink.href=`profile.html?uid=${postuserid}`
   postDate.textContent = post.createdAt
   readTime.textContent = `${post.readTime} min`
   postViews.textContent = `${post.views} views`
@@ -182,6 +182,7 @@ function displaypost(post) {
 
 // get the bio of the user that make a post that other user view, then display it on the bio section of the post page
 async function getBio(){
+  console.log(postuserid)
   let bio=await getDoc(doc(db,'users',postuserid))
   display(bio.data())
 }
@@ -289,6 +290,7 @@ postComment.addEventListener('click', () => {
       text: comment,
       authorId: currentuser.uid,
       authorName: `${user.Fname} ${user.Lname}`,
+      authorAvatar: user.profileImageUrl ,
       createdAt: new Date().toISOString(),
       like: 0
     }
@@ -322,8 +324,9 @@ getComments((comment) => {
   displayComment(comment)
 }, postid)
 
-//${comment.authorAvater.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)}
+
 function displayComment(comments) {
+  console.log(comments)
   let CommentCard = ''
   comments.forEach((comment) => {
     CommentCard +=
@@ -332,7 +335,7 @@ function displayComment(comments) {
 
   <img 
     class="comment-avatar" 
-    src="" 
+    src="${comment.authorAvater.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)}" 
     alt="${comment.authorName}" 
   />
 
