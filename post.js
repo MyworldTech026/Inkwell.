@@ -158,10 +158,11 @@ const coverImageDiv = document.querySelector('.js-cover-image-wrap')
 const coverImage = document.querySelector('.js-cover-image')
 const sidebarlikecount=document.querySelector('.js-sidebar-like-count')
 const coverimglink=document.querySelector('.js-post-author-link')
-
+const authorAvatar=document.querySelector('.js-author-avatar')
 //display getSinglePost
 function displaypost(post) {
   post.coverImageUrl ? coverImageDiv.classList.remove('hidden') : coverImageDiv.classList.add('hidden')
+  authorAvatar.src=post.authorAvater.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)
    coverImage.src=  post.coverImageUrl?post.coverImageUrl.replace('/upload/', `/upload/w_1200,c_scale/`):''
   postCategory.textContent = post.category
   postTitle.textContent = post.title
@@ -179,6 +180,7 @@ function displaypost(post) {
   likeCount.textContent = post.likes
   sidebarlikecount.textContent=post.likes
 }
+
 
 
 // get the bio of the user that make a post that other user view, then display it on the bio section of the post page
