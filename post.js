@@ -291,11 +291,11 @@ postComment.addEventListener('click', () => {
       text: comment,
       authorId: currentuser.uid,
       authorName: `${user.Fname} ${user.Lname}`,
-      authorAvatar: user.profileImageUrl ,
+      authorAvater: user.profileImageUrl ,
       createdAt: new Date().toISOString(),
       like: 0
     }
-    createComment(Comment)
+   createComment(Comment)
     dropComment.value = ''
   })
 
