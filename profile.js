@@ -1,7 +1,8 @@
 import { auth, db } from "./config.js"
-import { watchAuthState, getPost, getfollowerAndfollowing, uploadProfileImage, getCurrentUser, updateUserDetails, uploadImageToCloudinary, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "./onAuthStateChange_Guard.js"
+import { watchAuthState, getPost, getfollowerAndfollowing, uploadProfileImage, getCurrentUser, updateUserDetails, 
+        uploadImageToCloudinary, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "./onAuthStateChange_Guard.js"
 import { signOut, EmailAuthProvider,GoogleAuthProvider,reauthenticateWithCredential,reauthenticateWithPopup, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-import { getDoc, doc, getDocs, collection,deleteDoc,query,where} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { getDoc, doc, getDocs,onSnapshot, collection,deleteDoc,query,where} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 
 const profileuid = new URLSearchParams(window.location.search).get(`uid`)
@@ -67,8 +68,9 @@ watchAuthState(
     loginstate.classList.remove('hidden')
     logoutstate.classList.add('hidden')
   },
-  () => {
+  async () => {
     //  profileLink.href=`profile.html?uid=${user.uid}`
+     likedPost = await getAllLikedPost()
     loginstate.classList.add('hidden')
     logoutstate.classList.remove('hidden')
   }
@@ -100,9 +102,17 @@ if (profileuid) {
   })
 }
 
+const emptypost=document.querySelector('.js-posts-empty')
+const emptyPostLiked=document.querySelector('.js-liked-empty')
 function displayPost(posts) {
-  //let totalLike = 0
-  //totalPost.textContent = posts.length
+  if(posts.length===0){
+    postCardDiv.innerHTML=''
+     emptypost.classList.remove('hidden')
+       emptyPostLiked.classList.add('hidden')
+     return
+  }
+    emptypost.classList.add('hidden')
+       emptyPostLiked.classList.add('hidden')
   let postCard = ''
   posts.forEach((post) => {
     postCard +=
@@ -133,7 +143,7 @@ function displayPost(posts) {
     <img
       class="post-thumb"
       src="${post.coverImageUrl ? post.coverImageUrl.replace('/upload/', `/upload/w_600,h_400,c_fill,g_auto/`) : ''}"
-      alt="${post.title}"
+      alt=""
       loading="lazy"
     />
   </a>
@@ -379,14 +389,15 @@ async function getAllLikedPost() {
 
     for (const postDoc of allLikedPost.docs) {
       const likeref = doc(db, 'post', postDoc.id, 'likes', profileuid)
-      const likesnap = await getDoc(likeref)
-
-      if (likesnap.exists()) {
+      onSnapshot(likeref,(snapshot)=>{
+        const likesnap=snapshot.data()
+         if (likesnap) {
         likedPost.push({
           id: postDoc.id,
           ...postDoc.data()
         })
       }
+      })
     }
 
     likedPost = likedPost.filter((post) => post.authorId !== profileuid)
@@ -398,9 +409,17 @@ async function getAllLikedPost() {
 }
 
 
-
+//display all liked post by the user
 function displayAllLikedPost(allLikedPost) {
- 
+  console.log(allLikedPost)
+  if(allLikedPost.length===0){
+     postCardDiv.innerHTML=''
+     emptyPostLiked.classList.remove('hidden')
+      emptypost.classList.add('hidden')
+     return
+  }
+ emptyPostLiked.classList.add('hidden')
+   emptypost.classList.add('hidden')
   let likedpost = ''
   allLikedPost.forEach((post) => {
     likedpost += `
@@ -414,7 +433,7 @@ function displayAllLikedPost(allLikedPost) {
       <img
         class="post-author-avatar"
         src="${post.authorAvater.replace('/upload/', `/upload/w_80,h_80,c_fill,g_face/`)}"
-        alt="${post.authorName}"
+        alt=""
       />
       <a
         href="profile.html?uid=${post.authorId}"
