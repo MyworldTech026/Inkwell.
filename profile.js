@@ -1,8 +1,7 @@
 import { auth, db } from "./config.js"
-import { watchAuthState, getPost, getfollowerAndfollowing, uploadProfileImage, getCurrentUser, updateUserDetails, 
-        uploadImageToCloudinary, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "./onAuthStateChange_Guard.js"
-import { signOut, EmailAuthProvider,GoogleAuthProvider,reauthenticateWithCredential,reauthenticateWithPopup, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-import { getDoc, doc, getDocs,onSnapshot, collection,deleteDoc,query,where} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { watchAuthState, getPost, getfollowerAndfollowing, uploadProfileImage, getCurrentUser, updateUserDetails, uploadImageToCloudinary, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "../onAuthStateChange_Guard.js"
+import { signOut, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+import { getDoc, doc, getDocs, onSnapshot, collection, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 
 const profileuid = new URLSearchParams(window.location.search).get(`uid`)
@@ -70,7 +69,7 @@ watchAuthState(
   },
   async () => {
     //  profileLink.href=`profile.html?uid=${user.uid}`
-     likedPost = await getAllLikedPost()
+    likedPost = await getAllLikedPost()
     loginstate.classList.add('hidden')
     logoutstate.classList.remove('hidden')
   }
@@ -102,17 +101,18 @@ if (profileuid) {
   })
 }
 
-const emptypost=document.querySelector('.js-posts-empty')
-const emptyPostLiked=document.querySelector('.js-liked-empty')
+const emptypost = document.querySelector('.js-posts-empty')
+const emptyPostLiked = document.querySelector('.js-liked-empty')
+
 function displayPost(posts) {
-  if(posts.length===0){
-    postCardDiv.innerHTML=''
-     emptypost.classList.remove('hidden')
-       emptyPostLiked.classList.add('hidden')
-     return
+  if (posts.length === 0) {
+    postCardDiv.innerHTML = ''
+    emptypost.classList.remove('hidden')
+    emptyPostLiked.classList.add('hidden')
+    return
   }
-    emptypost.classList.add('hidden')
-       emptyPostLiked.classList.add('hidden')
+  emptypost.classList.add('hidden')
+  emptyPostLiked.classList.add('hidden')
   let postCard = ''
   posts.forEach((post) => {
     postCard +=
@@ -314,12 +314,25 @@ const navdropdown = document.querySelector('.js-nav-avatar')
 //   const resizeUrl = profilePic.replace('/upload/', `/upload/w_400,q_auto,f_auto/`)
 //   image.src = resizeUrl
 // })
+let currentuserPic;
+async function getCurrentUserprofilePic() {
+  if (currentUser) {
+    const pic = await getDoc(doc(db, 'users', currentUser.uid))
+    currentuserPic = pic.data().profileImageUrl
+  }
 
-getCurrentUser(profileuid, (current) => {
+}
+
+getCurrentUser(profileuid, async (current) => {
+  await getCurrentUserprofilePic()
   const profilePic = current.user.profileImageUrl
   const resizeUrl = profilePic.replace('/upload/', `/upload/w_400,q_auto,f_auto/`)
   image.src = resizeUrl
-   navdropdown.src = resizeUrl
+  if (currentUser.uid !== profileuid) {
+    navdropdown.src = currentuserPic
+    return
+  }
+  navdropdown.src = resizeUrl
 })
 
 
@@ -389,14 +402,14 @@ async function getAllLikedPost() {
 
     for (const postDoc of allLikedPost.docs) {
       const likeref = doc(db, 'post', postDoc.id, 'likes', profileuid)
-      onSnapshot(likeref,(snapshot)=>{
-        const likesnap=snapshot.data()
-         if (likesnap) {
-        likedPost.push({
-          id: postDoc.id,
-          ...postDoc.data()
-        })
-      }
+      onSnapshot(likeref, (snapshot) => {
+        const likesnap = snapshot.data()
+        if (likesnap) {
+          likedPost.push({
+            id: postDoc.id,
+            ...postDoc.data()
+          })
+        }
       })
     }
 
@@ -412,14 +425,14 @@ async function getAllLikedPost() {
 //display all liked post by the user
 function displayAllLikedPost(allLikedPost) {
   console.log(allLikedPost)
-  if(allLikedPost.length===0){
-     postCardDiv.innerHTML=''
-     emptyPostLiked.classList.remove('hidden')
-      emptypost.classList.add('hidden')
-     return
+  if (allLikedPost.length === 0) {
+    postCardDiv.innerHTML = ''
+    emptyPostLiked.classList.remove('hidden')
+    emptypost.classList.add('hidden')
+    return
   }
- emptyPostLiked.classList.add('hidden')
-   emptypost.classList.add('hidden')
+  emptyPostLiked.classList.add('hidden')
+  emptypost.classList.add('hidden')
   let likedpost = ''
   allLikedPost.forEach((post) => {
     likedpost += `
@@ -479,15 +492,15 @@ function displayAllLikedPost(allLikedPost) {
 const deleteAccount = document.querySelector('.js-delete-user-btn')
 const confirmPasswordModal = document.querySelector('.js-password-confirm-modal')
 const verifyPasswordBtn = document.querySelector('.js-verify-password')
-const verifyPasswordModalError=document.querySelector('.js-password-modal-error')
-const closeverifyPasswordBtn=document.querySelector('.js-close-password-modal')
-const passwordInput=document.querySelector('.js-confirm-password-input')
-const finalWarning=document.querySelector('.js-delete-warning-modal')
-const deleteMyAccountBtn=document.querySelector('.js-confirm-delete-account')
-const No_deleteUserAccount=document.querySelector('.js-cancel-delete-account')
-const cancelVerifyPasswordModal=document.querySelector('.js-cancel-password-modal')
+const verifyPasswordModalError = document.querySelector('.js-password-modal-error')
+const closeverifyPasswordBtn = document.querySelector('.js-close-password-modal')
+const passwordInput = document.querySelector('.js-confirm-password-input')
+const finalWarning = document.querySelector('.js-delete-warning-modal')
+const deleteMyAccountBtn = document.querySelector('.js-confirm-delete-account')
+const No_deleteUserAccount = document.querySelector('.js-cancel-delete-account')
+const cancelVerifyPasswordModal = document.querySelector('.js-cancel-password-modal')
 
-let google=false
+let google = false
 
 deleteAccount.addEventListener('click', async () => {
   const providerId = currentUser.providerData[0]?.providerId
@@ -495,7 +508,7 @@ deleteAccount.addEventListener('click', async () => {
     confirmPasswordModal.classList.remove('hidden')
   }
   else if (providerId === `google.com`) {
-    google=true
+    google = true
     finalWarning.classList.remove('hidden')
   }
 })
@@ -503,89 +516,89 @@ deleteAccount.addEventListener('click', async () => {
 //START
 // works if user login with password and email
 verifyPasswordBtn.addEventListener('click', () => {
-  const password=passwordInput.value.trim()
- reauthenticateuser(password)
- passwordInput.value=''
+  const password = passwordInput.value.trim()
+  reauthenticateuser(password)
+  passwordInput.value = ''
 })
 
 //close confirm password close modal
-closeverifyPasswordBtn.addEventListener('click',()=>{
-   confirmPasswordModal.classList.add('hidden')
-    passwordInput.value=''
+closeverifyPasswordBtn.addEventListener('click', () => {
+  confirmPasswordModal.classList.add('hidden')
+  passwordInput.value = ''
 })
 
 //close confirm password close modal
-cancelVerifyPasswordModal.addEventListener('click',()=>{
-   confirmPasswordModal.classList.add('hidden')
-    passwordInput.value=''
+cancelVerifyPasswordModal.addEventListener('click', () => {
+  confirmPasswordModal.classList.add('hidden')
+  passwordInput.value = ''
 })
 
 
 async function reauthenticateuser(password) {
   try {
     const credentials = EmailAuthProvider.credential(currentUser.email, password)
-    const p= await reauthenticateWithCredential(currentUser,credentials)
-     verifyPasswordModalError.classList.add('hidden')
-   finalWarning.classList.remove('hidden')
+    const p = await reauthenticateWithCredential(currentUser, credentials)
+    verifyPasswordModalError.classList.add('hidden')
+    finalWarning.classList.remove('hidden')
   }
   catch (error) {
     console.log(error.message)
-  if(error.code===`auth/invalid-credential`){
-     verifyPasswordModalError.classList.remove('hidden')
-      verifyPasswordModalError.textContent=`Wrong password`
-  }
+    if (error.code === `auth/invalid-credential`) {
+      verifyPasswordModalError.classList.remove('hidden')
+      verifyPasswordModalError.textContent = `Wrong password`
+    }
   }
 }
 
 
 //trigger deleteuserdata and as well delete a user
- deleteMyAccountBtn.addEventListener('click',async()=>{
-  if(google){
-      reauthWithgooglebeforedeleting()
-      finalWarning.classList.add('hidden')
-  }else{
+deleteMyAccountBtn.addEventListener('click', async () => {
+  if (google) {
+    reauthWithgooglebeforedeleting()
+    finalWarning.classList.add('hidden')
+  } else {
     await deleteUser(currentUser)
     deleteUserData()
   }
- 
- })
+
+})
 
 // dont delete account
- No_deleteUserAccount.addEventListener('click',()=>{
+No_deleteUserAccount.addEventListener('click', () => {
   finalWarning.classList.add('hidden')
- })
+})
 
 //END
 
 //delete user account with all there post/data
-async function deleteUserData(){
-  await deleteDoc(doc(db,'users',currentUser.uid))
-  const q=query(collection(db,'post'),
-   where(`authorId`,`==`,currentUser.uid))
+async function deleteUserData() {
+  await deleteDoc(doc(db, 'users', currentUser.uid))
+  const q = query(collection(db, 'post'),
+    where(`authorId`, `==`, currentUser.uid))
 
-   const userpost= await getDocs(q)
-  for(const postDoc of userpost.docs){
+  const userpost = await getDocs(q)
+  for (const postDoc of userpost.docs) {
     await deleteDoc(postDoc.ref)
   }
-    window.location.href=`index.html`
+  window.location.href = `index.html`
 }
 
 // if provider is google.com
 
-async function reauthWithgooglebeforedeleting(){
-try{
-  const credentials = new GoogleAuthProvider()
-  const p= await reauthenticateWithPopup(currentUser,credentials)
+async function reauthWithgooglebeforedeleting() {
+  try {
+    const credentials = new GoogleAuthProvider()
+    const p = await reauthenticateWithPopup(currentUser, credentials)
     await deleteUser(currentUser)
     deleteUserData()
-}
-catch(error){
-  console.log(error)
-  alert(`Something went wrong\nTry Again`)
-}
+  }
+  catch (error) {
+    console.log(error)
+    alert(`Something went wrong\nTry Again`)
+  }
 }
 
-  
+
 
 // START
 const confirm_view_unview = document.querySelector('.js-toggle-confirm-password')
