@@ -319,3 +319,42 @@ function trending() {
 //const alreadyfollowed=userToFollow.filter(user=> user.id !==ifuser.data().id)
 //${user.profileImageUrl.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)}
 
+
+//PRIVACY ABOUT TERM LOGIC
+
+const aboutLink=document.querySelector('.js-about-link')
+const privacyLink=document.querySelector('.js-privacy-link')
+const termLink=document.querySelector('.js-terms-link')
+
+// modals element
+const aboutModal=document.querySelector('.js-about-modal')
+const closeAboutModal=document.querySelector('.js-close-about')
+const privacyModal=document.querySelector('.js-privacy-modal')
+const closePrivacyModal=document.querySelector('.js-close-privacy')
+const termModal=document.querySelector('.js-terms-modal ')
+const closeTermModal=document.querySelector('.js-close-terms')
+
+aboutLink.addEventListener('click',()=>{
+  aboutModal.classList.remove('hidden')
+})
+
+closeAboutModal.addEventListener('click',()=>{
+   aboutModal.classList.add('hidden')
+})
+
+privacyLink.addEventListener('click',()=>{
+  privacyModal.classList.remove('hidden')
+})
+
+closePrivacyModal.addEventListener('click',()=>{
+    privacyModal.classList.add('hidden')
+})
+
+termLink.addEventListener('click',()=>{
+  termModal.classList.remove('hidden')
+})
+
+
+closeTermModal.addEventListener('click',()=>{
+   termModal.classList.add('hidden')
+})
