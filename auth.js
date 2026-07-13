@@ -474,3 +474,34 @@ function checktypeErrorAndDisplay(error) {
   }
   console.log(error)
 }
+
+
+
+
+//PRIVACY ABOUT TERM LOGIC
+const privacyLink=document.querySelector('.js-privacy-link')
+const termLink=document.querySelector('.js-terms-link')
+
+// modals element
+const privacyModal=document.querySelector('.js-privacy-modal')
+const closePrivacyModal=document.querySelector('.js-close-privacy')
+const termModal=document.querySelector('.js-terms-modal ')
+const closeTermModal=document.querySelector('.js-close-terms')
+
+
+privacyLink.addEventListener('click',()=>{
+  privacyModal.classList.remove('hidden')
+})
+
+closePrivacyModal.addEventListener('click',()=>{
+    privacyModal.classList.add('hidden')
+})
+
+termLink.addEventListener('click',()=>{
+  termModal.classList.remove('hidden')
+})
+
+
+closeTermModal.addEventListener('click',()=>{
+   termModal.classList.add('hidden')
+})
