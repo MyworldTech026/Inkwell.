@@ -671,3 +671,251 @@ a { text-decoration: none; color: inherit; }
 
 }
 
+
+
+
+/* ===========================
+   INFO MODAL OVERLAY
+=========================== */
+.info-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===========================
+   INFO MODAL INNER
+=========================== */
+.info-modal-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 620px;
+  margin: auto;
+  animation: slideUp 0.3s ease;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===========================
+   MODAL HEADER
+=========================== */
+.info-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.info-modal-title {
+  font-family: 'Lora', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.info-modal-close {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.info-modal-close:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* ===========================
+   MODAL BODY
+=========================== */
+.info-modal-body {
+  padding: 1.75rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.info-modal-body::-webkit-scrollbar { width: 4px; }
+.info-modal-body::-webkit-scrollbar-track { background: transparent; }
+.info-modal-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* ===========================
+   ABOUT MODAL SPECIFIC
+=========================== */
+.about-logo {
+  font-family: 'Lora', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+}
+
+.about-logo span { color: var(--accent); }
+
+.about-tagline {
+  text-align: center;
+  font-size: 0.925rem;
+  color: var(--text2);
+  font-style: italic;
+  font-family: 'Lora', serif;
+}
+
+.about-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.about-section-title {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.about-text {
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.about-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.about-list li {
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+.about-email {
+  display: inline-block;
+  font-size: 0.875rem;
+  color: var(--accent);
+  font-weight: 500;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.about-email:hover { color: var(--accent2); }
+
+.about-version {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+/* ===========================
+   PRIVACY & TERMS SPECIFIC
+=========================== */
+.info-last-updated {
+  font-size: 0.775rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-section-title {
+  font-family: 'Lora', serif;
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.info-text {
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.info-list {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info-list li {
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+/* ===========================
+   DIVIDER
+=========================== */
+.info-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 480px) {
+
+  .info-modal { padding: 1rem 0.75rem; }
+
+  .info-modal-inner {
+    border-radius: 12px;
+    max-height: 95vh;
+  }
+
+  .info-modal-header { padding: 1.25rem; }
+
+  .info-modal-body { padding: 1.25rem; gap: 1.25rem; }
+
+  .about-logo { font-size: 1.5rem; }
+
+  .info-modal-title { font-size: 1.1rem; }
+
+}
+
