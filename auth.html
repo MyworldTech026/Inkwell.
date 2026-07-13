@@ -192,9 +192,9 @@
               <span class="checkbox-custom"></span>
               <span class="checkbox-text">
                 I agree to the
-                <a href="#" class="auth-link">Terms of Service</a>
+                <a href="#" class="js-terms-link auth-link">Terms of Service</a>
                 and
-                <a href="#" class="auth-link">Privacy Policy</a>
+                <a href="#" class="js-privacy-link auth-link">Privacy Policy</a>
               </span>
             </label>
           </div>
@@ -264,8 +264,301 @@
   <!-- TOAST -->
   <div class="js-toast toast hidden"></div>
 
+
+
+<!-- ═══════════════════════════════════════
+     MODAL 2 — PRIVACY POLICY
+════════════════════════════════════════ -->
+<div class="js-privacy-modal info-modal hidden">
+  <div class="info-modal-inner">
+
+    <div class="info-modal-header">
+      <h2 class="info-modal-title">Privacy Policy</h2>
+      <button class="js-close-privacy info-modal-close">✕</button>
+    </div>
+
+    <div class="info-modal-body">
+
+      <p class="info-last-updated">Last updated: July 2026</p>
+
+      <div class="info-section">
+        <h3 class="info-section-title">1. Introduction</h3>
+        <p class="info-text">
+          Welcome to Inkwell. We respect your privacy and are 
+          committed to protecting your personal information. 
+          This Privacy Policy explains what information we 
+          collect, how we use it and your rights regarding 
+          your data.
+        </p>
+        <p class="info-text">
+          By using Inkwell you agree to the collection and 
+          use of information in accordance with this policy.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">2. Information We Collect</h3>
+        <p class="info-text">
+          When you create an account on Inkwell we collect:
+        </p>
+        <ul class="info-list">
+          <li>Your name and display name</li>
+          <li>Your email address</li>
+          <li>Your profile picture (if provided)</li>
+          <li>Your username</li>
+          <li>Content you publish including posts and comments</li>
+          <li>Your interactions such as likes and follows</li>
+        </ul>
+        <p class="info-text">
+          If you sign in with Google we receive your name, 
+          email address and profile picture from your 
+          Google account.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">3. How We Use Your Information</h3>
+        <p class="info-text">
+          We use the information we collect to:
+        </p>
+        <ul class="info-list">
+          <li>Create and manage your Inkwell account</li>
+          <li>Display your profile and published content</li>
+          <li>Enable you to interact with other users</li>
+          <li>Send you account related emails when necessary</li>
+          <li>Improve the Inkwell platform and user experience</li>
+        </ul>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">4. Data Storage</h3>
+        <p class="info-text">
+          Your data is stored securely using Google Firebase — 
+          a platform provided by Google LLC. Firebase uses 
+          industry standard security measures to protect 
+          your information.
+        </p>
+        <p class="info-text">
+          Your account authentication is managed by 
+          Firebase Authentication. Your posts, comments and 
+          profile information are stored in Firebase Firestore.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">5. Sharing Your Information</h3>
+        <p class="info-text">
+          We do not sell, trade or share your personal 
+          information with third parties.
+        </p>
+        <p class="info-text">
+          Content you publish on Inkwell such as posts and 
+          comments is visible to other users of the platform 
+          as that is the nature of a blogging platform.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">6. Your Rights</h3>
+        <p class="info-text">
+          You have the right to:
+        </p>
+        <ul class="info-list">
+          <li>Access the personal information we hold about you</li>
+          <li>Update or correct your profile information at any time</li>
+          <li>Delete your account and all associated data</li>
+          <li>Request information about how your data is used</li>
+        </ul>
+        <p class="info-text">
+          To delete your account go to your Profile page 
+          and use the Delete Account option. This will 
+          permanently remove your account and data.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">7. Cookies</h3>
+        <p class="info-text">
+          Inkwell uses Firebase Authentication which may 
+          store authentication tokens in your browser's 
+          local storage to keep you logged in between visits. 
+          These are not used for advertising or tracking purposes.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">8. Children's Privacy</h3>
+        <p class="info-text">
+          Inkwell is not intended for users under the age of 13. 
+          We do not knowingly collect personal information 
+          from children under 13.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">9. Changes to This Policy</h3>
+        <p class="info-text">
+          We may update this Privacy Policy from time to time. 
+          We will notify users of any significant changes by 
+          updating the date at the top of this page.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">10. Contact Us</h3>
+        <p class="info-text">
+          If you have any questions about this Privacy Policy 
+          please contact us at:
+        </p>
+        <a 
+          href="mailto:muhammedzulikaneni2000@gmail.com" 
+          class="about-email"
+        >
+          muhammedzulikaneni2000@gmail.com
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     MODAL 3 — TERMS OF SERVICE
+════════════════════════════════════════ -->
+<div class="js-terms-modal info-modal hidden">
+  <div class="info-modal-inner">
+
+    <div class="info-modal-header">
+      <h2 class="info-modal-title">Terms of Service</h2>
+      <button class="js-close-terms info-modal-close">✕</button>
+    </div>
+
+    <div class="info-modal-body">
+
+      <p class="info-last-updated">Last updated: July 2026</p>
+
+      <div class="info-section">
+        <h3 class="info-section-title">1. Acceptance of Terms</h3>
+        <p class="info-text">
+          By creating an account on Inkwell you agree to 
+          these Terms of Service. If you do not agree to 
+          these terms please do not use the platform.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">2. Your Account</h3>
+        <p class="info-text">
+          You are responsible for:
+        </p>
+        <ul class="info-list">
+          <li>Keeping your account password secure</li>
+          <li>All activity that occurs under your account</li>
+          <li>Ensuring the information you provide is accurate</li>
+          <li>Notifying us immediately of any unauthorised use</li>
+        </ul>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">3. Content Guidelines</h3>
+        <p class="info-text">
+          When publishing content on Inkwell you agree not to post:
+        </p>
+        <ul class="info-list">
+          <li>Content that is illegal, harmful or offensive</li>
+          <li>Hate speech or content that discriminates against others</li>
+          <li>Spam, misleading information or fake news</li>
+          <li>Content that violates someone else's copyright</li>
+          <li>Personal information of others without their consent</li>
+          <li>Content that harasses, threatens or bullies others</li>
+        </ul>
+        <p class="info-text">
+          We reserve the right to remove any content that 
+          violates these guidelines without notice.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">4. Your Content</h3>
+        <p class="info-text">
+          You own the content you publish on Inkwell. 
+          By publishing on Inkwell you grant us a non-exclusive 
+          license to display your content on the platform.
+        </p>
+        <p class="info-text">
+          You are responsible for ensuring you have the right 
+          to publish any content you post including images, 
+          quotes and references to other work.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">5. Prohibited Activities</h3>
+        <p class="info-text">
+          You agree not to:
+        </p>
+        <ul class="info-list">
+          <li>Use Inkwell for any illegal purpose</li>
+          <li>Attempt to hack or disrupt the platform</li>
+          <li>Create fake accounts or impersonate others</li>
+          <li>Scrape or copy content from Inkwell without permission</li>
+          <li>Use Inkwell to send unsolicited messages or spam</li>
+        </ul>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">6. Account Termination</h3>
+        <p class="info-text">
+          We reserve the right to suspend or terminate your 
+          account if you violate these Terms of Service. 
+          You may also delete your own account at any time 
+          from your Profile page.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">7. Disclaimer</h3>
+        <p class="info-text">
+          Inkwell is provided as is without any warranties. 
+          We do not guarantee that the platform will always 
+          be available, error free or secure. We are not 
+          responsible for any content posted by users.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">8. Changes to Terms</h3>
+        <p class="info-text">
+          We may update these Terms of Service at any time. 
+          Continued use of Inkwell after changes means you 
+          accept the new terms.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-section-title">9. Contact Us</h3>
+        <p class="info-text">
+          If you have any questions about these Terms 
+          please contact us at:
+        </p>
+        <a 
+          href="mailto:muhammedzulikaneni2000@gmail.com" 
+          class="about-email"
+        >
+          muhammedzulikaneni2000@gmail.com
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
   <!-- <script type="module" src="js/app.js"></script> -->
-  <script type="module" src="auth.js"></script>
+  <script type="module" src="scripts/auth.js"></script>
 </body>
 </html>
 
