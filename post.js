@@ -121,6 +121,7 @@ watchAuthState(
       }
        await getBio()
        await moreFromThisAuthor()
+       getCurrentUser()
       displaypost(post)
     })
   },
@@ -307,13 +308,16 @@ async function createComment(comment) {
 }
 
 
+const commentAvater=document.querySelector('.js-comment-user-avatar')
 // get currently login user details in order for me to get the user name
 // pass the user name into the comment the user make
 async function getCurrentUser() {
   const uid = currentuser.uid
   const user = await getDoc(doc(db, 'users', uid))
+   commentAvater.src=user.data().profileImageUrl.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)
   return user.data()
 }
+
 
 
 
