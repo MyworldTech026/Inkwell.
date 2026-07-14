@@ -179,16 +179,12 @@ const Website = document.querySelector('.js-edit-website ')
 
 
 // save user bio update
-saveeditbtn.addEventListener('click', async () => {
-  await getCurrentUser(profileuid, (user) => {
-    const currentUser = user.user
-
-    const userName = displayName.value === '' ? currentUser.userName : displayName.value
-    const bio = Bio.value === '' ? currentUser.bio : Bio.value
-    const x_handle = X.value === '' ? currentUser.x_handle : X.value
-    const github = Github.value === '' ? currentUser.github : Github.value
-    const website = Website.value === '' ? Website.value : currentUser.website
-
+saveeditbtn.addEventListener('click',() => {
+    const userName = displayName.value
+    const bio = Bio.value
+    const x_handle = X.value
+    const github = Github.value
+    const website = Website.value
     const updateUserData = {
       userName,
       bio,
@@ -196,11 +192,9 @@ saveeditbtn.addEventListener('click', async () => {
       github,
       website
     }
-    console.log(updateUserData)
     updateUserDetails(profileuid, updateUserData)
     editProfileForm.classList.add('hidden')
     isedit = false
-  })
 })
 
 // PROFILE INFO 
@@ -229,13 +223,15 @@ async function autoLoaduserBio(uid) {
 
 }
 
+//takes in array of social  handle and reformat it into a link
 function displaySocials(socials) {
   let socialHandle = ''
-  socials.forEach((social) => {
-    socialHandle += social ? `<a href="${social}" class="post-title">${social}</a>` : ''
+  socials.forEach((social,i) => {
+    socialHandle += social[i]!==undefined ? `<a href="${social}" class="post-title">${social}</a>` : ''
   })
   return socialHandle
 }
+
 
 
 canceleditbtn.addEventListener('click', () => {
