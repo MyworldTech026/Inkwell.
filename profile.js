@@ -253,8 +253,8 @@ function displaySocials(user) {
     if(user[key].includes('https')||user[key].includes('http')){
     fineweb=  user[key].replace('https://','').replace('http://','').replace('www.','').replace('blog.','').replace('.com','').replace('.ng','').replace('.edu','').replace('.org','').replace('.dev','').replace('.vercel','').replace('.app','')
     }
-    socialHandle+= fineweb?`<a href="${baseUrl}${user[key]}" class="">${fineweb}</a>`
-    :`<a href="${baseUrl}${user[key]}" class="">${user[key]}</a>`
+    socialHandle+= fineweb?`<a href="${baseUrl}${user[key]}" class="post-title">${fineweb}</a>`
+    :`<a href="${baseUrl}${user[key]}" class="post-title">${user[key]}</a>`
   }
   })
   return socialHandle
