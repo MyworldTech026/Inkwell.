@@ -179,12 +179,14 @@ const Website = document.querySelector('.js-edit-website ')
 
 
 // save user bio update
+
 saveeditbtn.addEventListener('click',() => {
     const userName = displayName.value
     const bio = Bio.value
     const x_handle = X.value
     const github = Github.value
     const website = Website.value
+
     const updateUserData = {
       userName,
       bio,
@@ -204,11 +206,11 @@ const profileBio = document.querySelector('.js-profile-bio')
 const socialLinks = document.querySelector('.js-profile-socials')
 const dateJoined = document.querySelector('.js-profile-joined ')
 
+
 async function autoLoaduserBio(uid) {
   await getCurrentUser(uid, (current) => {
     let currentUser = current.user
-    let socials = [currentUser.x_handle, currentUser.github, currentUser.website]
-
+    
     displayName.value = currentUser.userName
     Bio.value = currentUser.bio
     X.value = currentUser.x_handle
@@ -218,20 +220,45 @@ async function autoLoaduserBio(uid) {
     username.textContent = currentUser.userName
     profileBio.textContent = currentUser.bio
 
-    socialLinks.innerHTML = displaySocials(socials)
+     let handle={
+  twitter:currentUser.x_handle,
+  github: currentUser.github,
+  website: currentUser.website
+ }
+   socialLinks.innerHTML=displaySocials(handle)
   })
 
 }
 
+const socials=[{
+  key:'twitter',
+  baseUrl:'https://twitter.com/',
+},
+{
+  key:'github',
+  baseUrl:'https://github.com/',
+},
+{
+  key:'website',
+  baseUrl:'',
+}
+]
+
 //takes in array of social  handle and reformat it into a link
-function displaySocials(socials) {
+function displaySocials(user) {
   let socialHandle = ''
-  socials.forEach((social,i) => {
-    socialHandle += social[i]!==undefined ? `<a href="${social}" class="post-title">${social}</a>` : ''
+  let fineweb=''
+  socials.forEach(({key,baseUrl}) => {
+  if(user[key]){
+    if(user[key].includes('https')||user[key].includes('http')){
+    fineweb=  user[key].replace('https://','').replace('http://','').replace('www.','').replace('blog.','').replace('.com','').replace('.ng','').replace('.edu','').replace('.org','').replace('.dev','').replace('.vercel','').replace('.app','')
+    }
+    socialHandle+= fineweb?`<a href="${baseUrl}${user[key]}" class="">${fineweb}</a>`
+    :`<a href="${baseUrl}${user[key]}" class="">${user[key]}</a>`
+  }
   })
   return socialHandle
 }
-
 
 
 canceleditbtn.addEventListener('click', () => {
