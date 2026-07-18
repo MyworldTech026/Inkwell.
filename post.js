@@ -3,6 +3,8 @@ import { getDoc,getDocs, doc, collection, addDoc, deleteDoc, onSnapshot, setDoc,
 import { watchAuthState, getComments, updateCommentCount, updateLikeCount,updateLikecommentCount, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "../onAuthStateChange_Guard.js"
 const postid = new URLSearchParams(window.location.search).get('id')
 
+let cached=JSON.parse(sessionStorage.getItem('singlePost'))
+
 let posts;
 let currentuser;
 
@@ -103,6 +105,7 @@ loginToComment.addEventListener('click', () => {
 
 
 
+
 let postuserid;
 // check if a user is login or logout
 watchAuthState(
@@ -114,6 +117,10 @@ watchAuthState(
     await getSinglePost( async(post) => {
       // postuserid=post.authorId
       posts = post
+      sessionStorage.setItem('singlePost',JSON.stringify({
+        id:postid,
+        post:post
+       }))
       if (user.uid === post.authorId) {
         editpost.classList.remove('hidden')
         deletepost.classList.remove('hidden')
@@ -129,6 +136,10 @@ watchAuthState(
     await getSinglePost(async(post) => {
       //postuserid=post.authoruid
       posts = post
+       sessionStorage.setItem('singlePost',JSON.stringify({
+        id:postid,
+        post:post
+       }))
       await getBio()
       await moreFromThisAuthor()
       displaypost(post)
@@ -159,8 +170,15 @@ const coverImage = document.querySelector('.js-cover-image')
 const sidebarlikecount=document.querySelector('.js-sidebar-like-count')
 const coverimglink=document.querySelector('.js-post-author-link')
 const authorAvatar=document.querySelector('.js-author-avatar')
+
+if(cached){
+  if(cached.id===postid){
+      displaypost(cached.post)
+  }
+}
 //display getSinglePost
 function displaypost(post) {
+  console.log(post)
   post.coverImageUrl ? coverImageDiv.classList.remove('hidden') : coverImageDiv.classList.add('hidden')
   authorAvatar.src=post.authorAvater.replace('/upload/', `/upload/w_1200,c_scale/`)
    coverImage.src=  post.coverImageUrl?post.coverImageUrl.replace('/upload/', `/upload/w_1200,c_scale/`):''
@@ -184,7 +202,6 @@ function displaypost(post) {
 
 // get the bio of the user that make a post that other user view, then display it on the bio section of the post page
 async function getBio(){
-  console.log(postuserid)
   let bio=await getDoc(doc(db,'users',postuserid))
   display(bio.data())
 }
@@ -193,6 +210,7 @@ const bioAvater=document.querySelector('.js-bio-avatar')
  const bioName=document.querySelector('.js-bio-name')
  const bioText=document.querySelector('.js-bio-text')
  const bioFollower=document.querySelector('.js-bio-followers')
+
 
 function display(bio){
   bioAvater.src=bio.profileImageUrl.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)
@@ -307,7 +325,6 @@ async function createComment(comment) {
   updateCommentCount(postid, 1)
 }
 
-
 const commentAvater=document.querySelector('.js-comment-user-avatar')
 // get currently login user details in order for me to get the user name
 // pass the user name into the comment the user make
@@ -317,7 +334,6 @@ async function getCurrentUser() {
    commentAvater.src=user.data().profileImageUrl.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)
   return user.data()
 }
-
 
 
 
@@ -331,7 +347,6 @@ getComments((comment) => {
 
 
 function displayComment(comments) {
-  console.log(comments)
   let CommentCard = ''
   comments.forEach((comment) => {
     CommentCard +=
@@ -368,6 +383,26 @@ function displayComment(comments) {
   })
   commentContainer.innerHTML = CommentCard
 }
+
+
+function showdeletecommentbutton(comment) {
+  if (currentuser && currentuser.uid === comment.authorId) {
+    return `
+        <button class="comment-delete-btn js-delete-comment"
+        data-id="${comment.id}">
+        Delete
+      </button>
+      `
+  } else {
+    return `
+        <button class="comment-delete-btn js-delete-comment hidden"
+        data-id="${comment.id}">
+        Delete
+      </button>
+      `
+  }
+}
+
 
 // like comment logic
 // if(currentuser.uid){
@@ -417,25 +452,7 @@ async function likeComment(commentid){
 }
 
 
-function showdeletecommentbutton(comment) {
-  if (currentuser && currentuser.uid === comment.authorId) {
-    return `
-        <button class="comment-delete-btn js-delete-comment"
-        data-id="${comment.id}">
-        Delete
-      </button>
-      `
-  } else {
-    return `
-        <button class="comment-delete-btn js-delete-comment hidden"
-        data-id="${comment.id}">
-        Delete
-      </button>
-      `
-  }
-}
-
-// like comment logic
+// delete comment trigger
 commentContainer.addEventListener('click', (e) => { 
   const deletecommentbtn = e.target.closest('.js-delete-comment')
   if (!deletecommentbtn) return
@@ -443,7 +460,7 @@ commentContainer.addEventListener('click', (e) => {
   deleteComment(deleteCommentId)
 })
 
-
+//delete comment function
 async function deleteComment(deleteid) {
   await deleteDoc(doc(db, 'post', postid, 'comments', deleteid))
   updateCommentCount(postid, -1)
@@ -473,7 +490,6 @@ async function checkIfLiked() {
     sidebarlikeicon.textContent = '🤍'
     isLiked = false
   }
- // console.log(isLiked)
 }
 
 
@@ -485,7 +501,7 @@ likeBtn.addEventListener('click', async () => {
   }
   if (isLiked) {
     await deleteDoc(doc(db, 'post', postid, 'likes', currentuser.uid))
-    updateLikeCount(postid, -1)
+   await updateLikeCount(postid, -1)
     likeBtn.classList.remove('liked')
     sidebarlikeicon.textContent = '🤍'
     likeIcon.textContent = '🤍'
