@@ -3,7 +3,7 @@ import { getDoc,getDocs, doc, collection, addDoc, deleteDoc, onSnapshot, setDoc,
 import { watchAuthState, getComments, updateCommentCount, updateLikeCount,updateLikecommentCount, follow, unfollow, updateAuthorfollowersCount, updateCurrentuserfolloweringCount } from "../onAuthStateChange_Guard.js"
 const postid = new URLSearchParams(window.location.search).get('id')
 
-let cached=JSON.parse(sessionStorage.getItem('singlePost'))
+let cached=JSON.parse(sessionStorage.getItem('singlePost'))||{}
 
 let posts;
 let currentuser;
@@ -110,6 +110,7 @@ let postuserid;
 // check if a user is login or logout
 watchAuthState(
   async (user) => {
+     let cached=JSON.parse(sessionStorage.getItem('singlePost'))||{}
     currentuser = user
     await checkIfLiked()
     navUser.classList.add('hidden')
@@ -117,10 +118,8 @@ watchAuthState(
     await getSinglePost( async(post) => {
       // postuserid=post.authorId
       posts = post
-      sessionStorage.setItem('singlePost',JSON.stringify({
-        id:postid,
-        post:post
-       }))
+      cached[postid]=post
+      sessionStorage.setItem('singlePost',JSON.stringify(cached))
       if (user.uid === post.authorId) {
         editpost.classList.remove('hidden')
         deletepost.classList.remove('hidden')
@@ -134,12 +133,12 @@ watchAuthState(
   },
   async () => {
     await getSinglePost(async(post) => {
+       let cached=JSON.parse(sessionStorage.getItem('singlePost'))||{}
       //postuserid=post.authoruid
       posts = post
-       sessionStorage.setItem('singlePost',JSON.stringify({
-        id:postid,
-        post:post
-       }))
+      cached[postid]=post
+      console.log(cached)
+       sessionStorage.setItem('singlePost',JSON.stringify(cached))
       await getBio()
       await moreFromThisAuthor()
       displaypost(post)
@@ -172,13 +171,12 @@ const coverimglink=document.querySelector('.js-post-author-link')
 const authorAvatar=document.querySelector('.js-author-avatar')
 
 if(cached){
-  if(cached.id===postid){
-      displaypost(cached.post)
+  if(cached[postid]){
+      displaypost(cached[postid])
   }
 }
 //display getSinglePost
 function displaypost(post) {
-  console.log(post)
   post.coverImageUrl ? coverImageDiv.classList.remove('hidden') : coverImageDiv.classList.add('hidden')
   authorAvatar.src=post.authorAvater.replace('/upload/', `/upload/w_1200,c_scale/`)
    coverImage.src=  post.coverImageUrl?post.coverImageUrl.replace('/upload/', `/upload/w_1200,c_scale/`):''
