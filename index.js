@@ -1,8 +1,9 @@
 import { auth, db } from "./config.js"
 import { signOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-import { watchAuthState, getPost } from "./onAuthStateChange_Guard.js"
+import { watchAuthState, getPost } from "../onAuthStateChange_Guard.js"
 import { getDoc, getDocs, doc, collection, addDoc, updateDoc ,onSnapshot} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
+let AllPost=JSON.parse(sessionStorage.getItem('Allpost'))
 
 let posts = [];
 let currentUser;
@@ -83,16 +84,22 @@ const username = document.querySelector('.js-username')
 
 let  userTofollow;
 
+
+
+
+function post(){
 getPost((post) => {
   let publish = post.filter(filtered => filtered.status === 'publish')
   posts = publish
+
+  sessionStorage.setItem('Allpost',JSON.stringify(publish))
   if (posts.length !== 0) {
     applyFilter()
   }
   displayAllpost(publish)
   trending()
 })
-
+}
 const profileLink=document.querySelector('.js-profile-link')
 const dashboardlink=document.querySelector('.js-dashboard-link')
 watchAuthState(
@@ -134,8 +141,18 @@ async function getUser(userid) {
 //   return allUser
 // }
 
+
+
 const profleAvater=document.querySelector('.js-nav-avatar')
 const postCardDiv = document.querySelector('.js-posts-list')
+
+// i did this to improve the user experience , what this code does is that it first check if there is data stored in session storage then call post function to check if there is any new change in the original data,then save back to session storage
+if(AllPost){
+  displayAllpost(AllPost)
+post()
+}else{
+  post()
+}
 
 async function displayAllpost(posts) {
   if (posts.length === 0) {
@@ -195,7 +212,7 @@ let currentCategory = `all`
 let sortSearch = 'latest'
 
 function applyFilter() {
-  let filtered = posts
+  let filtered =  posts 
   if (currentCategory !== `all`) {
     filtered = filtered.filter((post) => {
       return post.category === currentCategory
@@ -205,7 +222,6 @@ function applyFilter() {
 
   if (currentSearch !== '') {
     const search = currentSearch
-    console.log(search)
     filtered = filtered.filter((post) => {
       return (
         post.title.toLocaleLowerCase().includes(search) ||
@@ -301,23 +317,7 @@ function trending() {
   trendingDiv.innerHTML = trendCard
 }
 
-// category.addEventListener('click', (e) => {
-//   const cat_btn = e.target.closest('.js-cat-btn')
-//   if (!cat_btn) return
-//   cat_btn.classList.add('active')
-//   currentCategory= cat_btn.dataset.category
-//  applyFilter()
-// })
 
-
-
-
-
-// ${user.photoURL}
-// ${user.name}
-
-//const alreadyfollowed=userToFollow.filter(user=> user.id !==ifuser.data().id)
-//${user.profileImageUrl.replace('/upload/',`/upload/w_80,h_80,c_fill,g_face/`)}
 
 
 //PRIVACY ABOUT TERM LOGIC
